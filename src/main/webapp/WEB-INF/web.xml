@@ -1,114 +1,124 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd" id="WebApp_ID" version="4.0">
- <display-name>yunpan</display-name>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
+         id="WebApp_ID" version="4.0">
+    <display-name>yunpan</display-name>
 
 
--<context-param>
+    -
+    <context-param>
 
-<param-name>contextConfigLocation</param-name>
+        <param-name>contextConfigLocation</param-name>
 
-<param-value>classpath:applicationContext-*.xml</param-value>
+        <param-value>classpath:applicationContext-*.xml</param-value>
 
-</context-param>
-
-
--<listener>
-
-<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
-
-</listener>
-
-<!--后缀名为css/gif/jps/png/js的静态资源不拦截-->
+    </context-param>
 
 
+    -
+    <listener>
 
--<servlet-mapping>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
 
-<servlet-name>default</servlet-name>
+    </listener>
 
-<url-pattern>*.css</url-pattern>
-
-<url-pattern>*.js</url-pattern>
-
-<url-pattern>*.png</url-pattern>
-
-<url-pattern>*.gif</url-pattern>
-
-<url-pattern>*.jpg</url-pattern>
-
-</servlet-mapping>
+    <!--后缀名为css/gif/jps/png/js的静态资源不拦截-->
 
 
--<servlet>
+    -
+    <servlet-mapping>
 
-<servlet-name>springmvc</servlet-name>
+        <servlet-name>default</servlet-name>
 
-<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <url-pattern>*.css</url-pattern>
 
+        <url-pattern>*.js</url-pattern>
 
--<init-param>
+        <url-pattern>*.png</url-pattern>
 
-<param-name>contextConfigLocation</param-name>
+        <url-pattern>*.gif</url-pattern>
 
-<param-value>classpath:spring-mvc.xml</param-value>
+        <url-pattern>*.jpg</url-pattern>
 
-</init-param>
-
-</servlet>
-
-
--<servlet-mapping>
-
-<servlet-name>springmvc</servlet-name>
-
-<url-pattern>/</url-pattern>
-
-</servlet-mapping>
-
-<!-- 处理post乱码filter -->
+    </servlet-mapping>
 
 
+    -
+    <servlet>
 
--<filter>
+        <servlet-name>springmvc</servlet-name>
 
-<filter-name>CharacterEncodingFilter</filter-name>
-
-<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
-
-
--<init-param>
-
-<param-name>encoding</param-name>
-
-<param-value>utf-8</param-value>
-
-</init-param>
-
-</filter>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
 
 
--<filter-mapping>
+        -
+        <init-param>
 
-<filter-name>CharacterEncodingFilter</filter-name>
+            <param-name>contextConfigLocation</param-name>
 
-<url-pattern>/*</url-pattern>
+            <param-value>classpath:spring-mvc.xml</param-value>
 
-</filter-mapping>
+        </init-param>
+
+    </servlet>
 
 
--<welcome-file-list>
+    -
+    <servlet-mapping>
 
-<welcome-file>index.html</welcome-file>
+        <servlet-name>springmvc</servlet-name>
 
-<welcome-file>index.htm</welcome-file>
+        <url-pattern>/</url-pattern>
 
-<welcome-file>index.jsp</welcome-file>
+    </servlet-mapping>
 
-<welcome-file>default.html</welcome-file>
+    <!-- 处理post乱码filter -->
 
-<welcome-file>default.htm</welcome-file>
 
-<welcome-file>default.jsp</welcome-file>
+    -
+    <filter>
 
-</welcome-file-list>
+        <filter-name>CharacterEncodingFilter</filter-name>
+
+        <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+
+
+        -
+        <init-param>
+
+            <param-name>encoding</param-name>
+
+            <param-value>utf-8</param-value>
+
+        </init-param>
+
+    </filter>
+
+
+    -
+    <filter-mapping>
+
+        <filter-name>CharacterEncodingFilter</filter-name>
+
+        <url-pattern>/*</url-pattern>
+
+    </filter-mapping>
+
+
+    -
+    <welcome-file-list>
+
+        <welcome-file>index.html</welcome-file>
+
+        <welcome-file>index.htm</welcome-file>
+
+        <welcome-file>index.jsp</welcome-file>
+
+        <welcome-file>default.html</welcome-file>
+
+        <welcome-file>default.htm</welcome-file>
+
+        <welcome-file>default.jsp</welcome-file>
+
+    </welcome-file-list>
 </web-app>
