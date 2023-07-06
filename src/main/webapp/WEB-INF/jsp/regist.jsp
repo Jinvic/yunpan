@@ -25,7 +25,7 @@
 <!--content开始-->
     <div class="content">
         <div class="reg">
-            <form action="${pageContext.request.contextPath }/user/regist.action" method="post">
+            <form action="${pageContext.request.contextPath }/user/doRegist.action" method="post">
                 <dl>
                 <dt>用户名</dt> 
                 <dd class="ipt_box">
