@@ -1,6 +1,7 @@
 package com.qst.yunpan.dao;
 
 import com.qst.yunpan.pojo.User;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -15,4 +16,6 @@ public interface UserDao {
     public User findUser(User user) throws Exception;
 
     String getCountSize(String username) throws Exception;
+
+    void reSize(@Param("username") String username, @Param("formatSize") String formatSize) throws Exception;
 }

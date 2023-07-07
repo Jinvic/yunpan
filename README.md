@@ -8,7 +8,6 @@ QST青软实训
 
 云端拉到本地调试需修改配置文件：resources\db.properties
 
-
 ## 开发进度
 
 ### 2023.7.6
@@ -25,6 +24,15 @@ QST青软实训
 
 完成文件上传
 
+完成计算文件大小
+
 ## TODO List
 
-上传文件时同名检测并警告
+- [ ] 上传文件时同名检测并警告
+
+## BUG Fix
+
+- [ ] index界面，总大小显示和百分比计算
+
+- [X] 添加文件后User数据表countSize不变： <br>
+  FileService.countFileSize()在判空前操作空指针对象。
