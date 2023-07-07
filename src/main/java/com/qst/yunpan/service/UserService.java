@@ -28,14 +28,33 @@ public class UserService {
         return true;
     }
 
+<<<<<<< HEAD
     public User findUser(User user) {
         try{
             user.setPassword(UserUtils.MD5(user.getPassword()));//用户密码MD5加密
             User existUser = userDao.findUser(user);
             return existUser;
         }catch (Exception e){
+=======
+
+    public User findUser(User user) {
+        try {
+            //将用户的密码进行md5加密
+            user.setPassword(UserUtils.MD5(user.getPassword()));
+            User exsitUser = userDao.findUser(user);
+            return exsitUser;
+        } catch (Exception e) {
+>>>>>>> temp
             e.printStackTrace();
             return null;
         }
     }
+<<<<<<< HEAD
 }
+=======
+
+
+
+}
+
+>>>>>>> temp
