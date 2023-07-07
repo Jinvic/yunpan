@@ -28,4 +28,10 @@
           and password = #{password}
 >>>>>>> temp
     </select>
+
+    <select id="getCountSize" parameterType="java.lang.String" resultType="java.lang.String">
+        select countSize
+        from user
+        where username = #{username}
+    </select>
 </mapper>

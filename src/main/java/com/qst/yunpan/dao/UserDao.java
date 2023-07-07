@@ -11,11 +11,8 @@ public interface UserDao {
     //检查用户名是否已被注册
     public User checkUser(User user) throws Exception;
 
-<<<<<<< HEAD
-    public User findUser(User user);
-=======
     //用户登录
-    public  User findUser(User user) throws Exception;
->>>>>>> temp
-}
+    public User findUser(User user) throws Exception;
 
+    String getCountSize(String username) throws Exception;
+}
