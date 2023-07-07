@@ -12,5 +12,7 @@ public interface UserDao {
     public User checkUser(User user) throws Exception;
 
     //用户登录
-    public  User findUser(User user) throws Exception;
+    public User findUser(User user) throws Exception;
+
+    String getCountSize(String username) throws Exception;
 }

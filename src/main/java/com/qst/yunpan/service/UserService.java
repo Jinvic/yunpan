@@ -42,6 +42,15 @@ public class UserService {
     }
 
 
-
+    public String getCountSize(String username) {
+        String countSize = null;
+        try {
+            countSize = userDao.getCountSize(username);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return countSize;
+        }
+        return countSize;
+    }
 }
 
