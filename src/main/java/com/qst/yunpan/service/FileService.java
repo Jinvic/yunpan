@@ -6,6 +6,8 @@ import com.qst.yunpan.pojo.FileCustom;
 import com.qst.yunpan.pojo.User;
 import com.qst.yunpan.utils.FileUtils;
 import com.qst.yunpan.utils.UserUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,20 +17,24 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+
 /**
  * 文件业务逻辑类
  */
 @Service
 public class FileService {
+    private Logger logger = LoggerFactory.getLogger(FileService.class);
+
     @Autowired
     private OfficeDao officeDao;
     @Autowired
     private UserDao userDao;
 
+
     //文件相对前缀
     public static final String PREFIX = "WEB-INF" + File.separator + "file" + File.separator;
     //新用户注册默认文件夹
-    public static final String[] DEFAULT_DIRECTORY = {"vido", "music", "source", "image", User.RECYCLE};
+    protected static final String[] DEFAULT_DIRECTORY = {"vido", "music", "source", "image", User.RECYCLE};
 
     //给注册用户开辟网盘空间
     public void addNewNameSpace(HttpServletRequest request, String namespace) {
@@ -134,7 +140,7 @@ public class FileService {
                 file.transferTo(distFile);
                 if ("office".equals(FileUtils.getFileType(distFile))) {
                     try {
-                        String suffix = fileName.substring(fileName.lastIndexOf(".") + 1);
+                        String suffix = fileName.substring(fileName.lastIndexOf('.') + 1);
                         String documentId = FileUtils.getDocClient().createDocument(distFile, fileName, suffix).getDocumentId();
                         officeDao.addOffice(documentId, FileUtils.MD5(distFile));
                     } catch (Exception e) {
@@ -155,7 +161,8 @@ public class FileService {
         try {
             userDao.reSize(userName, countFileSize(request));
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(e.toString());
+//            e.printStackTrace();
         }
     }
 

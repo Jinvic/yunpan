@@ -3,12 +3,16 @@ package com.qst.yunpan.service;
 import com.qst.yunpan.dao.UserDao;
 import com.qst.yunpan.pojo.User;
 import com.qst.yunpan.utils.UserUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UserService {
+    private Logger logger = LoggerFactory.getLogger(UserService.class);
+
     @Autowired
     private UserDao userDao;
 
@@ -36,7 +40,8 @@ public class UserService {
             User exsitUser = userDao.findUser(user);
             return exsitUser;
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(e.toString());
+//            e.printStackTrace();
             return null;
         }
     }
@@ -47,7 +52,8 @@ public class UserService {
         try {
             countSize = userDao.getCountSize(username);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(e.toString());
+//            e.printStackTrace();
             return countSize;
         }
         return countSize;
