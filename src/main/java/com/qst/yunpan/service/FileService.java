@@ -1,6 +1,7 @@
 package com.qst.yunpan.service;
 
 import com.qst.yunpan.dao.OfficeDao;
+import com.qst.yunpan.dao.UserDao;
 import com.qst.yunpan.pojo.FileCustom;
 import com.qst.yunpan.pojo.User;
 import com.qst.yunpan.utils.FileUtils;
@@ -21,6 +22,8 @@ import java.util.List;
 public class FileService {
     @Autowired
     private OfficeDao officeDao;
+    @Autowired
+    private UserDao userDao;
 
     //文件相对前缀
     public static final String PREFIX = "WEB-INF" + File.separator + "file" + File.separator;
@@ -53,10 +56,12 @@ public class FileService {
      * @return {@link String}
      */
     public String getFileName(HttpServletRequest request, String fileName) {
-        fileName = fileName.replace("\\", "//");
+
         if (fileName == null || fileName.equals("\\")) {
             System.out.println(1);
             fileName = "";
+        } else {
+            fileName = fileName.replace("\\", "//");
         }
         String username = UserUtils.getUsername(request);
         String realpath = getRootPath(request) + username + File.separator + fileName;
@@ -137,6 +142,47 @@ public class FileService {
                 }
             }
         }
-//        reSize(request);
+        reSize(request);
+    }
+
+    /**
+     * 重新计算大小
+     *
+     * @param request 请求
+     */
+    public void reSize(HttpServletRequest request) {
+        String userName = UserUtils.getUsername(request);
+        try {
+            userDao.reSize(userName, countFileSize(request));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 统计用户文件大小
+     *
+     * @param request 请求
+     * @return {@link String}
+     */
+    public String countFileSize(HttpServletRequest request) {
+        long countFileSize = countFileSize(new File(getFileName(request, null)));
+        return FileUtils.getDataSize(countFileSize);
+    }
+
+    private long countFileSize(File srcFile) {
+        File[] listFiles = srcFile.listFiles();
+        if (listFiles == null) {
+            return 0;
+        }
+        long count = 0;
+        for (File file : listFiles) {
+            if (file.isDirectory()) {
+                count += countFileSize(file);
+            } else {
+                count += file.length();
+            }
+        }
+        return count;
     }
 }
