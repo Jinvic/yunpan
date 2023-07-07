@@ -15,4 +15,8 @@
         from user
         where username = #{username}
     </select>
+<!--    用户登录-->
+    <select id  = "findUser" resultType="com.qst.yunpan.pojo.User">
+        select *from user where username=#{username} and passward=#{passward}
+    </select>
 </mapper>

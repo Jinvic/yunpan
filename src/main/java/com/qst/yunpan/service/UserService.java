@@ -27,4 +27,15 @@ public class UserService {
         userDao.addUser(user);
         return true;
     }
+
+    public User findUser(User user) {
+        try{
+            user.setPassword(UserUtils.MD5(user.getPassword()));//用户密码MD5加密
+            User existUser = userDao.findUser(user);
+            return existUser;
+        }catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+    }
 }

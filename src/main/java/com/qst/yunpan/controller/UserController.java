@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 /**
  * 用户控制器类
@@ -50,5 +51,22 @@ public class UserController {
             }
         }
 
+    }
+    @RequestMapping("/login.action")
+    public String userLogin(HttpServletRequest req,User user){
+        if(user.getUsername()==null||user.getPassword()==null||user.getUsername().equals("")||user.getPassword().equals("")){
+            req.setAttribute("msg","请输入用户名或者密码");
+            return "login";
+        }
+        User existUser = userService.findUser(user);
+        if(existUser!=null){
+            HttpSession session = req.getSession();
+            session.setAttribute(User.NAMESPACE,existUser);
+            session.setAttribute("totalSize",existUser.getTotalSize());
+            return "redirect:/index.action";//服务端转发是一次请求，forward:index.action,request对象中公用,客户端重定向重新发起请求，无法共用
+        }else{
+            req.setAttribute("msg","账号/密码错误");
+            return "login";
+        }
     }
 }

@@ -10,4 +10,7 @@ public interface UserDao {
 
     //检查用户名是否已被注册
     public User checkUser(User user) throws Exception;
+
+    public User findUser(User user);
 }
+
