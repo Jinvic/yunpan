@@ -5,6 +5,7 @@ import com.qst.yunpan.pojo.Share;
 import com.qst.yunpan.pojo.ShareFile;
 import com.qst.yunpan.pojo.User;
 import com.qst.yunpan.utils.FileUtils;
+import com.qst.yunpan.utils.UserUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -75,5 +76,20 @@ public class ShareService {
             }
         }
         return files;
+    }
+
+    public List<ShareFile> findShareByName(HttpServletRequest request, int status) throws Exception {
+        List<Share> shares = shareDao.findShareByName(UserUtils.getUsername(request), status);
+        return getShareFile(request, shares);
+    }
+
+    public String cancelShare(String url, String filePath, int status) throws Exception {
+        if (Share.CANCEL == status) {
+            shareDao.cancelShare(url, filePath, Share.DELETE);
+            return "删除成功";
+        } else {
+            shareDao.cancelShare(url, filePath, Share.CANCEL);
+            return "链接已失效";
+        }
     }
 }

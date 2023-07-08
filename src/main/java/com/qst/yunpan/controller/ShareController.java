@@ -54,4 +54,49 @@ public class ShareController {
         }
         return "share";
     }
+
+    /**
+     * 按状态查找分享
+     *
+     * @param status  状态 1|2|-1
+     * @param request 请求
+     * @return {@link Result}<{@link List}<{@link ShareFile}>>
+     */
+    @RequestMapping("/searchShare")
+    public @ResponseBody Result<List<ShareFile>> searchShare(HttpServletRequest request, int status) {
+        try {
+            //DEBUG:
+            System.out.println("before findShareByName\n");
+            List<ShareFile> files = shareService.findShareByName(request, status);
+            System.out.println("after findShareByName\n");
+            Result<List<ShareFile>> result = new Result<>(415, true, "获取成功");
+            System.out.println("after new Result<>\n");
+            result.setData(files);
+            System.out.println("after new result.setData\n");
+            return result;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Result<>(411, false, "获取失败");
+        }
+    }
+
+    /**
+     * 取消分享
+     *
+     * @param url      url
+     * @param filePath 文件路径
+     * @param status   状态
+     * @return {@link Result}<{@link String}>
+     */
+    @RequestMapping("/cancelShare")
+    public @ResponseBody Result<String> cancelShare(String url, String filePath, int status) {
+        try {
+            String msg = shareService.cancelShare(url, filePath, status);
+            Result<String> result = new Result<String>(425, true, msg);
+            return result;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Result<String>(421, false, "删除失败");
+        }
+    }
 }

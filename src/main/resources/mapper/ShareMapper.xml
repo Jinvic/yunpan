@@ -14,4 +14,18 @@
         where shareUrl = #{shareUrl}
           and status = #{status}
     </select>
+
+    <select id="findShareByName" resultType="com.qst.yunpan.pojo.Share">
+        select *
+        from share
+        where shareUser = #{username, jdbcType=VARCHAR}
+          and status = #{status, jdbcType=TINYINT}
+    </select>
+
+    <update id="cancelShare">
+        update share
+        set status = #{status}
+        where shareUrl = #{url}
+          and path = #{filePath}
+    </update>
 </mapper>
