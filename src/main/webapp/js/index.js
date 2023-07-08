@@ -653,3 +653,5 @@ var currentPath;
 		    };
 		    new Document('officeContent', option);
 	}
+/**引入ckplayer插件*/
+<script src="${pageContext.request.contextPath }/js/ckplayer/ckplayer.js"> </script>

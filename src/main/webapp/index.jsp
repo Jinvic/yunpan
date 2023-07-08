@@ -14,6 +14,8 @@
 <script type="text/javascript" src="${pageContext.request.contextPath }/js/jquery.min.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath }/js/login.js"></script>
 <title></title>
+	<link href="${pageContext.request.contextPath }/css/lightbox.css" rel="stylesheet">
+	<script src="${pageContext.request.contextPath }/js/lightbox.js"></script>
 </head>
 
 
