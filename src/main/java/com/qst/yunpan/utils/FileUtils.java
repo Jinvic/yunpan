@@ -3,6 +3,9 @@ package com.qst.yunpan.utils;
 import com.baidubce.BceClientConfiguration;
 import com.baidubce.auth.DefaultBceCredentials;
 import com.baidubce.services.doc.DocClient;
+import com.qst.yunpan.service.FileService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.DigestUtils;
 
 import java.io.File;
@@ -15,6 +18,7 @@ import java.util.Map;
 import java.util.UUID;
 
 public class FileUtils {
+    private static Logger logger = LoggerFactory.getLogger(FileUtils.class);
 
     //计算文件大小并转换格式
     public static String getDataSize(long size) {
@@ -46,7 +50,7 @@ public class FileUtils {
     }
 
     //匹配文件类型
-    public final static Map<String, String> FILE_TYPE_MAP = new HashMap<String, String>();
+    protected final static Map<String, String> FILE_TYPE_MAP = new HashMap<String, String>();
 
     static {
         FILE_TYPE_MAP.put("jpg", "image");
@@ -106,7 +110,7 @@ public class FileUtils {
             return "folder-open";
         }
         String fileName = file.getPath();
-        String suffix = fileName.substring(fileName.lastIndexOf(".") + 1);
+        String suffix = fileName.substring(fileName.lastIndexOf('.') + 1);
         String fileType = FILE_TYPE_MAP.get(suffix);
         return fileType == null ? "file" : fileType;
     }
@@ -135,7 +139,8 @@ public class FileUtils {
             bys = org.apache.commons.io.FileUtils.readFileToByteArray(file);
             return DigestUtils.md5DigestAsHex(bys).toUpperCase();
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e.toString());
+//            e.printStackTrace();
             return null;
         }
     }
