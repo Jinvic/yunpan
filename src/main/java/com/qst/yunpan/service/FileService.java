@@ -1,5 +1,6 @@
 package com.qst.yunpan.service;
 
+import com.qst.yunpan.dao.FileDao;
 import com.qst.yunpan.dao.OfficeDao;
 import com.qst.yunpan.dao.UserDao;
 import com.qst.yunpan.pojo.FileCustom;
@@ -14,10 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +36,8 @@ public class FileService {
     private OfficeDao officeDao;
     @Autowired
     private UserDao userDao;
+    @Autowired
+    private FileDao fileDao;
 
 
     //文件相对前缀
@@ -353,33 +353,26 @@ public class FileService {
             }
         }
     }
-    public List<FileCustom> searchFile(HttpServletRequest request, String currentPath, String reg, String regType) {
-        List<FileCustom> list = new ArrayList<>();
-        matchFile(request, list, new File(getSearchFileName(request, currentPath)), reg, regType == null ? "" : regType);
-        return list;
-    }
+
     /**
      * 新建文件夹
      *
      * @param request
-     * @param currentPath
-     *            当前路径
-     * @param directoryName
-     *            文件夹名
+     * @param currentPath   当前路径
+     * @param directoryName 文件夹名
      * @return
      */
     public boolean addDirectory(HttpServletRequest request, String currentPath, String directoryName) {
         File file = new File(getFileName(request, currentPath), directoryName);
         return file.mkdir();
     }
+
     /**
      * 删除文件
      *
      * @param request
-     * @param currentPath
-     *            当前路径
-     * @param directoryName
-     *            文件名
+     * @param currentPath   当前路径
+     * @param directoryName 文件名
      * @throws Exception
      */
     public void delDirectory(HttpServletRequest request, String currentPath, String[] directoryName) throws Exception {
@@ -397,9 +390,11 @@ public class FileService {
         //重新计算文件大小
         reSize(request);
     }
+
     public String getRecyclePath(HttpServletRequest request) {
         return getFileName(request, User.RECYCLE);
     }
+
     /**
      * 重命名文件
      *
@@ -416,6 +411,7 @@ public class FileService {
         File descFile = new File(getFileName(request, currentPath), destName);
         return file.renameTo(descFile);//重命名
     }
+
     public SummaryFile summarylistFile(String realPath, int number) {
         File file = new File(realPath);
         SummaryFile sF = new SummaryFile();
@@ -423,11 +419,11 @@ public class FileService {
         if (file.isDirectory()) {
             sF.setisFile(false);
             if (realPath.length() <= number) {
-                sF.setfileName("yun盘");
+                sF.setFileName("yun盘");
                 sF.setPath("");
-            }else{
+            } else {
                 String path = file.getPath();
-                sF.setfileName(file.getName());
+                sF.setFileName(file.getName());
                 //截取固定长度 的字符串，从number开始到value.length-number结束.
                 sF.setPath(path.substring(number));
             }
@@ -447,13 +443,12 @@ public class FileService {
         }
         return sF;
     }
+
     /**
      * copy文件
      *
-     * @param srcFile
-     *            源文件
-     * @param targetFile
-     *            目标文件
+     * @param srcFile    源文件
+     * @param targetFile 目标文件
      * @throws IOException
      */
     private void copyfile(File srcFile, File targetFile) throws IOException {
@@ -477,7 +472,8 @@ public class FileService {
             }
         }
     }
-    public void copyDirectory(HttpServletRequest request, String currentPath, String[] directoryName,String targetdirectorypath) throws Exception {
+
+    public void copyDirectory(HttpServletRequest request, String currentPath, String[] directoryName, String targetdirectorypath) throws Exception {
         for (String srcName : directoryName) {
             File srcFile = new File(getFileName(request, currentPath), srcName);
             File targetFile = new File(getFileName(request, targetdirectorypath), srcName);

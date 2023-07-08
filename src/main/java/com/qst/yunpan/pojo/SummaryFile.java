@@ -9,4 +9,45 @@ public class SummaryFile {
     private int listdiretory;//目录
     private List<SummaryFile> listFile;//文件
     //省略get/set方法
+
+
+    public boolean getisFile() {
+        return this.isFile;
+    }
+
+    public void setisFile(boolean isFile) {
+        this.isFile = isFile;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public int getListdiretory() {
+        return listdiretory;
+    }
+
+    public void setListdiretory(int listdiretory) {
+        this.listdiretory = listdiretory;
+    }
+
+    public List<SummaryFile> getListFile() {
+        return listFile;
+    }
+
+    public void setListFile(List<SummaryFile> listFile) {
+        this.listFile = listFile;
+    }
 }

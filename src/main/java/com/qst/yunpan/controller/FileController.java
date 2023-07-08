@@ -2,9 +2,15 @@ package com.qst.yunpan.controller;
 
 import com.qst.yunpan.pojo.FileCustom;
 import com.qst.yunpan.pojo.Result;
+import com.qst.yunpan.pojo.SummaryFile;
 import com.qst.yunpan.service.FileService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -136,7 +142,7 @@ public class FileController {
      * @return Json对象
      */
     @RequestMapping("/addDirectory")
-    public @ResponseBody Result<String> addDirectory(HttpServletRequest request,String currentPath, String directoryName) {
+    public @ResponseBody Result<String> addDirectory(HttpServletRequest request, String currentPath, String directoryName) {
         try {
             fileService.addDirectory(request, currentPath, directoryName);
             return new Result<>(336, true, "添加成功");
@@ -153,7 +159,7 @@ public class FileController {
      * @return Json对象
      */
     @RequestMapping("/delDirectory")
-    public @ResponseBody Result<String> delDirectory(HttpServletRequest request,String currentPath, String[] directoryName) {
+    public @ResponseBody Result<String> delDirectory(HttpServletRequest request, String currentPath, String[] directoryName) {
         try {
             fileService.delDirectory(request, currentPath, directoryName);
             return new Result<>(346, true, "删除成功");
@@ -182,7 +188,7 @@ public class FileController {
     }
 
     @RequestMapping("/summarylist")
-    public String summarylist(HttpServletRequest request,Model model) {
+    public String summarylist(HttpServletRequest request, Model model) {
         String webrootpath = fileService.getFileName(request, "");
         int number = webrootpath.length();
         SummaryFile rootlist = fileService.summarylistFile(webrootpath, number);
@@ -191,7 +197,7 @@ public class FileController {
     }
 
     @RequestMapping("/copyDirectory")
-    public @ResponseBody Result<String> copyDirectory(HttpServletRequest request,String currentPath, String[] directoryName, String targetdirectorypath) throws Exception {
+    public @ResponseBody Result<String> copyDirectory(HttpServletRequest request, String currentPath, String[] directoryName, String targetdirectorypath) throws Exception {
         try {
             fileService.copyDirectory(request, currentPath, directoryName,
                     targetdirectorypath);
