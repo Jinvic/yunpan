@@ -317,14 +317,13 @@ public class FileService {
         return realpath;
     }
 
-    private void matchFile(HttpServletRequest request, List<FileCustom> list, File dirFile,
-                           String reg,
-                           String regType) {
+    private void matchFile(HttpServletRequest request, List<FileCustom> list, File dirFile, String reg, String regType) {
         File[] listFiles = dirFile.listFiles();
         if (listFiles != null) {
             for (File file : listFiles) {
                 if (file.isFile()) {
                     String suffixType = FileUtils.getFileType(file);
+                    //匹配后缀（分类）||匹配关键字（查询）
                     if (suffixType.equals(regType) || (reg != null && file.getName().contains(reg))) {
                         FileCustom custom = new FileCustom();
                         custom.setFileName(file.getName());

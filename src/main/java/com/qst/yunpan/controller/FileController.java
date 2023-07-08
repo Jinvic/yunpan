@@ -75,7 +75,7 @@ public class FileController {
      * 文件下载
      *
      * @param currentPath 当前路径
-     * @param downPath    下路径
+     * @param downPath    下载路径
      * @param username    用户名
      * @return {@link ResponseEntity}<{@link byte[]}>
      */
@@ -102,22 +102,22 @@ public class FileController {
     /**
      * 查找文件（模糊查询）
      *
-     * @param currentPath 当前路径
-     * @param regType     查找文件类型
      * @param request     请求
+     * @param reg         文件
+     * @param currentPath 当前路径
+     * @param regType     文件类型
      * @return {@link Result}<{@link List}<{@link FileCustom}>>
      */
-//    @RequestMapping("/searchFile.action")
-//    public @ResponseBody Result<List<FileCustom>> searchFile(HttpServletRequest request, String currentPath, String regType) {
-//        try {
-//            List<FileCustom> searchFile = fileService.searchFile(request, currentPath, regType);
-//            Result<List<FileCustom>> result = new Result<>(376, true, "查找成功");
-//            result.setData(searchFile);
-//            return result;
-//        } catch (Exception e) {
-//            logger.error(e.toString());
-//            //e.printStackTrace();
-//            return new Result<>(371, false, "查找失败");
-//        }
-//    }
+    @RequestMapping("/searchFile.action")
+    public @ResponseBody Result<List<FileCustom>> searchFile(HttpServletRequest request, String reg, String currentPath, String regType) {
+        try {
+            List<FileCustom> searchFile = fileService.searchFile(request, currentPath, reg, regType);
+            Result<List<FileCustom>> result = new Result<>(376, true, "查找成功");
+            result.setData(searchFile);
+            return result;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Result<>(371, false, "查找失败");
+        }
+    }
 }
