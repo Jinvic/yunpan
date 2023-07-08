@@ -1,6 +1,7 @@
 package com.qst.yunpan.controller;
 
 import com.qst.yunpan.pojo.FileCustom;
+import com.qst.yunpan.pojo.RecycleFile;
 import com.qst.yunpan.pojo.Result;
 import com.qst.yunpan.service.FileService;
 import com.qst.yunpan.utils.FileUtils;
@@ -12,13 +13,16 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 @Controller
@@ -119,5 +123,74 @@ public class FileController {
             e.printStackTrace();
             return new Result<>(371, false, "查找失败");
         }
+    }
+
+    /**
+     * 打开文件
+     *
+     * @param response
+     *            响应文件流
+     * @param currentPath
+     *            当前路径
+     * @param fileName
+     *            文件名
+     * @param fileType
+     *            文件类型
+     */
+    @RequestMapping("/openFile")
+    public void openFile(HttpServletResponse response, HttpServletRequest request, String currentPath, String fileName, String fileType) {
+        try {
+            fileService.respFile(response, request, currentPath, fileName, fileType);
+        }catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 打开文档
+     *
+     * @param currentPath
+     *            当面路径
+     * @param fileName
+     *            文件名
+     * @param fileType
+     *            文件类型
+     * @return Json对象（文件Id）
+     */
+    @RequestMapping("/openOffice")
+    public @ResponseBody Result<String> openOffice(HttpServletRequest request, String currentPath,
+                                                   String fileName, String fileType) {
+        try {
+            String openOffice = fileService.openOffice(request, currentPath,fileName);
+            if (openOffice != null) {
+                Result<String> result = new Result<>(505, true, "打开成功");
+                result.setData(openOffice);
+                return result;
+            }
+            return new Result<>(501, false, "打开失败");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Result<>(501, false, "打开失败");
+        }
+    }
+    //将路径和文件名传入model，再返回给前台打开
+    @RequestMapping("/openAudioPage")
+    public String openAudioPage(Model model, String currentPath, String fileName) {
+        model.addAttribute("currentPath", currentPath);
+        model.addAttribute("fileName", fileName);
+        return "audio";
+    }
+    //获取回收站文件信息
+    @RequestMapping("/recycleFile")
+    public String recycleFile() {
+        try {
+            List<RecycleFile> findDelFile = fileService.recycleFiles(request);
+            if(null != findDelFile && findDelFile.size() != 0) {
+                request.setAttribute("findDelFile", findDelFile);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "recycle";
     }
 }

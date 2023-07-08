@@ -3,9 +3,11 @@ package com.qst.yunpan.service;
 import com.qst.yunpan.dao.OfficeDao;
 import com.qst.yunpan.dao.UserDao;
 import com.qst.yunpan.pojo.FileCustom;
+import com.qst.yunpan.pojo.RecycleFile;
 import com.qst.yunpan.pojo.User;
 import com.qst.yunpan.utils.FileUtils;
 import com.qst.yunpan.utils.UserUtils;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -345,5 +348,40 @@ public class FileService {
                 }
             }
         }
+    }
+    //编码转换
+    public void respFile(HttpServletResponse response, HttpServletRequest request, String currentPath, String fileName, String type) throws IOException {
+        File file = new File(getFileName(request, currentPath), fileName);
+        InputStream inputStream = new FileInputStream(file);
+        if ("docum".equals(type)) {
+            response.setCharacterEncoding("UTF-8");
+            IOUtils.copy(inputStream, response.getWriter(), "UTF-8");
+        } else {
+            IOUtils.copy(inputStream, response.getOutputStream());
+        }
+    }
+
+    /**
+     * 打开文档文件
+     *
+     * @param request
+     * @param currentPath
+     * @param fileName
+     * @return
+     * @throws Exception
+     */
+    public String openOffice(HttpServletRequest request, String currentPath, String fileName) throws Exception {
+        return officeDao.getOfficeId(FileUtils.MD5(new File(getFileName(request, currentPath), fileName)));
+    }
+
+    /*--回收站显示所有删除文件--*/
+    public List<RecycleFile> recycleFiles(HttpServletRequest request) throws Exception {
+        List<RecycleFile> recycleFiles = fileDao.selectFiles(UserUtils.getUsername(request));
+        for (RecycleFile file : recycleFiles) {
+            File f = new File(getRecyclePath(request), new File(file.getFilePath()).getName());
+            file.setFileName(f.getName());
+            file.setLastTime(FileUtils.formatTime(f.lastModified()));
+        }
+        return recycleFiles;
     }
 }
