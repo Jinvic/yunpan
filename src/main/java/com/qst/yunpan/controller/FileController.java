@@ -271,7 +271,7 @@ public class FileController {
     }
     //获取回收站文件信息
     @RequestMapping("/recycleFile")
-    public String recycleFile() {
+    public String recycleFile(HttpServletRequest request) {
         try {
             List<RecycleFile> findDelFile = fileService.recycleFiles(request);
             if(null != findDelFile && findDelFile.size() != 0) {
@@ -281,5 +281,26 @@ public class FileController {
             e.printStackTrace();
         }
         return "recycle";
+    }
+    //将选中的文件进行还原
+    @RequestMapping("/revertDirectory")
+    public @ResponseBody Result<String> revertDirectory(HttpServletRequest request, int[] fileId) {
+        try {
+            fileService.revertDirectory(request, fileId);
+            return new Result<>(327, true, "还原成功");
+        } catch (Exception e) {
+            return new Result<>(322, false, "还原失败");
+        }
+    }
+    //清空回收站
+    @RequestMapping("/delAllRecycle")
+    public @ResponseBody Result<String> delAllRecycleDirectory(HttpServletRequest request) {
+        try {
+            fileService.delAllRecycle(request);
+            // 返回状态码
+            return new Result<>(327, true, "删除成功");
+        } catch (Exception e) {
+            return new Result<>(322, false, "删除失败");
+        }
     }
 }
