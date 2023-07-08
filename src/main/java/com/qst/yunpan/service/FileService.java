@@ -1,9 +1,11 @@
 package com.qst.yunpan.service;
 
+import com.qst.yunpan.dao.FileDao;
 import com.qst.yunpan.dao.OfficeDao;
 import com.qst.yunpan.dao.UserDao;
 import com.qst.yunpan.pojo.FileCustom;
 import com.qst.yunpan.pojo.RecycleFile;
+import com.qst.yunpan.pojo.SummaryFile;
 import com.qst.yunpan.pojo.User;
 import com.qst.yunpan.utils.FileUtils;
 import com.qst.yunpan.utils.UserUtils;
@@ -17,11 +19,14 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 文件业务逻辑类
@@ -34,6 +39,8 @@ public class FileService {
     private OfficeDao officeDao;
     @Autowired
     private UserDao userDao;
+    @Autowired
+    private FileDao fileDao;
 
 
     //文件相对前缀
@@ -349,6 +356,159 @@ public class FileService {
             }
         }
     }
+
+    /**
+     * 新建文件夹
+     *
+     * @param request
+     * @param currentPath   当前路径
+     * @param directoryName 文件夹名
+     * @return
+     */
+    public boolean addDirectory(HttpServletRequest request, String currentPath, String directoryName) {
+        File file = new File(getFileName(request, currentPath), directoryName);
+        return file.mkdir();
+    }
+
+    /**
+     * 删除文件
+     *
+     * @param request
+     * @param currentPath   当前路径
+     * @param directoryName 文件名
+     * @throws Exception
+     */
+    public void delDirectory(HttpServletRequest request, String currentPath, String[] directoryName) throws Exception {
+        for (String fileName : directoryName) {
+            //拼接源文件的地址
+            String srcPath = currentPath + File.separator + fileName;
+            //根据源文件相对地址拼接 绝对路径
+            File src = new File(getFileName(request, srcPath));//即将删除的文件地址
+            File dest = new File(getRecyclePath(request));//回收站目录地址
+            //调用commons.jar包中的moveToDirectory移动文件,移至回收站目录
+            org.apache.commons.io.FileUtils.moveToDirectory(src, dest, true);
+            //保存本条删除信息
+            fileDao.insertFiles(srcPath, UserUtils.getUsername(request));
+        }
+        //重新计算文件大小
+        reSize(request);
+    }
+
+    public String getRecyclePath(HttpServletRequest request) {
+        return getFileName(request, User.RECYCLE);
+    }
+
+    /**
+     * 重命名文件
+     *
+     * @param request
+     * @param currentPath
+     * @param srcName
+     * @param destName
+     * @return
+     */
+    public boolean renameDirectory(HttpServletRequest request, String currentPath, String srcName, String destName) {
+        //根据源文件名  获取  源地址
+        File file = new File(getFileName(request, currentPath), srcName);
+        //同上
+        File descFile = new File(getFileName(request, currentPath), destName);
+        return file.renameTo(descFile);//重命名
+    }
+
+    public SummaryFile summarylistFile(String realPath, int number) {
+        File file = new File(realPath);
+        SummaryFile sF = new SummaryFile();
+        List<SummaryFile> returnlist = new ArrayList<SummaryFile>();
+        if (file.isDirectory()) {
+            sF.setisFile(false);
+            if (realPath.length() <= number) {
+                sF.setFileName("yun盘");
+                sF.setPath("");
+            } else {
+                String path = file.getPath();
+                sF.setFileName(file.getName());
+                //截取固定长度 的字符串，从number开始到value.length-number结束.
+                sF.setPath(path.substring(number));
+            }
+            /* 设置抽象文件夹的包含文件集合 */
+            for (File filex : file.listFiles()) {
+                //获取当前文件的路径，构造该文件
+                SummaryFile innersF = summarylistFile(filex.getPath(), number);
+                if (!innersF.getisFile()) {
+                    returnlist.add(innersF);
+                }
+            }
+            sF.setListFile(returnlist);
+            /* 设置抽象文件夹的包含文件夹个数 */
+            sF.setListdiretory(returnlist.size());
+        } else {
+            sF.setisFile(true);
+        }
+        return sF;
+    }
+
+    /**
+     * copy文件
+     *
+     * @param srcFile    源文件
+     * @param targetFile 目标文件
+     * @throws IOException
+     */
+    private void copyfile(File srcFile, File targetFile) throws IOException {
+        if (!srcFile.isDirectory()) {
+            /* 如果是文件，直接复制 */
+            targetFile.createNewFile();
+            FileInputStream src = (new FileInputStream(srcFile));
+            FileOutputStream target = new FileOutputStream(targetFile);
+            FileChannel in = src.getChannel();
+            FileChannel out = target.getChannel();
+            in.transferTo(0, in.size(), out);
+            src.close();
+            target.close();
+        } else {
+            /* 如果是文件夹，再遍历 */
+            File[] listFiles = srcFile.listFiles();
+            targetFile.mkdir();
+            for (File file : listFiles) {
+                File realtargetFile = new File(targetFile, file.getName());
+                copyfile(file, realtargetFile);
+            }
+        }
+    }
+
+    public void copyDirectory(HttpServletRequest request, String currentPath, String[] directoryName, String targetdirectorypath) throws Exception {
+        for (String srcName : directoryName) {
+            File srcFile = new File(getFileName(request, currentPath), srcName);
+            File targetFile = new File(getFileName(request, targetdirectorypath), srcName);
+            /* 处理目标目录中存在同名文件或文件夹问题 */
+            String srcname = srcName;
+            String prefixname = "";
+            String targetname = "";
+            if (targetFile.exists()) {
+                String[] srcnamesplit = srcname.split("\\)");
+                if (srcnamesplit.length > 1) {
+                    String intstring = srcnamesplit[0].substring(1);
+                    Pattern pattern = Pattern.compile("[0-9]*");
+                    Matcher isNum = pattern.matcher(intstring);
+                    if (isNum.matches()) {
+                        srcname = srcname.substring(srcnamesplit[0].length() + 1);
+                    }
+                }
+                for (int i = 1; true; i++) {
+                    prefixname = "(" + i + ")";
+                    targetname = prefixname + srcname;
+                    targetFile = new File(targetFile.getParent(), targetname);
+                    if (!targetFile.exists()) {
+                        break;
+                    }
+                }
+                targetFile = new File(targetFile.getParent(), targetname);
+            }
+            /* 复制 */
+            copyfile(srcFile, targetFile);
+        }
+    }
+
     //编码转换
     public void respFile(HttpServletResponse response, HttpServletRequest request, String currentPath, String fileName, String type) throws IOException {
         File file = new File(getFileName(request, currentPath), fileName);
