@@ -377,7 +377,7 @@ var currentPath;
 	}
 	/**查找文件*/
 	function searchFile(obj){
-		var reg = $(obj).prev().val();
+		var reg = $(obj).prev().val();//获得id为obj的value值
 		if(reg.trim() == "" || reg.trim() == null){
 // 			if(currentPath != "\\"){
 // 				window.location.reload();
