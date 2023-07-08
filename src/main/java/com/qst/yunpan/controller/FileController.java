@@ -206,4 +206,24 @@ public class FileController {
             return new Result<>(361, true, "复制失败");
         }
     }
+    /**
+     * 移动文件夹
+     *
+     * @param currentPath
+     *            当前路径
+     * @param directoryName
+     *            文件夹名
+     * @param targetdirectorypath
+     *            目标位置
+     * @return Json对象
+     */
+    @RequestMapping("/moveDirectory")
+    public @ResponseBody Result<String> moveDirectory(HttpServletRequest request,String currentPath,String[] directoryName, String targetdirectorypath) {
+        try {
+            fileService.moveDirectory(request, currentPath, directoryName,targetdirectorypath);
+            return new Result<>(366, true, "移动成功");
+        } catch (Exception e) {
+            return new Result<>(361, true, "移动失败");
+        }
+    }
 }
