@@ -15,7 +15,6 @@
     <context:component-scan base-package="com.qst.yunpan.controller"/>
     <!--配置注解驱动-->
     <mvc:annotation-driven></mvc:annotation-driven>
-
     <!--拦截器-->
     <mvc:interceptors>
         <mvc:interceptor>
@@ -39,8 +38,5 @@
         <property name="prefix" value="/WEB-INF/jsp/"/>
         <property name="suffix" value=".jsp"/>
     </bean>
-<<<<<<< HEAD
-=======
 
->>>>>>> temp
 </beans>

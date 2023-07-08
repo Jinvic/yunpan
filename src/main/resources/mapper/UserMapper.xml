@@ -15,18 +15,12 @@
         from user
         where username = #{username}
     </select>
-<<<<<<< HEAD
-<!--    用户登录-->
-    <select id  = "findUser" resultType="com.qst.yunpan.pojo.User">
-        select *from user where username=#{username} and passward=#{passward}
-=======
 
     <select id="findUser" resultType="com.qst.yunpan.pojo.User">
         select *
         from user
         where username = #{username}
           and password = #{password}
->>>>>>> temp
     </select>
 
     <select id="getCountSize" parameterType="java.lang.String" resultType="java.lang.String">
