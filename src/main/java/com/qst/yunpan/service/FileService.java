@@ -618,4 +618,28 @@ public class FileService {
         }
         return recycleFiles;
     }
+    //调用数据操作层，根据要还原的文件id获得文件，然后根据文件名获取源文件的地址
+    public void revertDirectory(HttpServletRequest request, int[] fileId) throws Exception {
+        for (int id : fileId) {
+            RecycleFile file = fileDao.selectFile(id);
+            String fileName = new File(file.getFilePath()).getName();
+            File src = new File(getRecyclePath(request), fileName);
+            File dest = new File(getFileName(request, file.getFilePath()));
+            org.apache.commons.io.FileUtils.moveToDirectory(src, dest.getParentFile(), true);
+            fileDao.deleteFile(id, UserUtils.getUsername(request));
+        }
+    }
+    //依次遍历回收站中的各个文件，并逐一删除
+    public void delAllRecycle(HttpServletRequest request) throws Exception {
+        //获取回收站中的所有文件
+        File file = new File(getRecyclePath(request));
+        //遍历文件夹下所有文件
+        File[] inferiorFile = file.listFiles();
+        for (File f : inferiorFile) {
+            delFile(f);//调用本类下面的delFile()方法
+        }
+        //根据用户进行删除
+        fileDao.deleteFiles(UserUtils.getUsername(request));
+        reSize(request);
+    }
 }
