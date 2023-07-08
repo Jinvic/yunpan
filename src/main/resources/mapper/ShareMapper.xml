@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qst.yunpan.dao.ShareDao">
+    <insert id="shareFile" parameterType="com.qst.yunpan.pojo.Share">
+        insert into share(shareUrl, path, shareUser)
+        values (#{shareUrl}, #{path}, #{shareUser})
+    </insert>
+
+    <select id="findShare" parameterType="com.qst.yunpan.pojo.Share" resultType="com.qst.yunpan.pojo.Share">
+        select *
+        from share
+        where shareUrl = #{shareUrl}
+          and status = #{status}
+    </select>
+</mapper>

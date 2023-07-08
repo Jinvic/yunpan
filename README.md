@@ -40,5 +40,15 @@ QST青软实训
 
 - [ ] index界面，百分比计算和显示
 
+- [ ] 分享界面修正
+
 - [X] 添加文件后User数据表countSize不变： <br>
   FileService.countFileSize()在判空前操作空指针对象。
+
+- [ ] 分享页面文件夹只能下载不能查看内容
+
+- [X] layer插件弹窗乱码： <br>
+  设置js文件字符集为UTF-8即可
+
+- [X] 分享链接不正确：<br>
+  修改index.js下的joinUrl()函数即可
