@@ -291,4 +291,60 @@ public class FileService {
             downloadFile.delete();
         }
     }
+
+    /**
+     * 搜索文件
+     *
+     * @param request     请求
+     * @param currentPath 当前路径
+     * @param reg         关键词？
+     * @param regType     文件类型
+     * @return {@link List}<{@link FileCustom}>
+     */
+    public List<FileCustom> searchFile(HttpServletRequest request, String currentPath, String reg, String regType) {
+        List<FileCustom> list = new ArrayList<>();
+        matchFile(request, list, new File(getSearchFileName(request, currentPath)), reg, regType == null ? "" : regType);
+        return list;
+    }
+
+    private String getSearchFileName(HttpServletRequest request, String fileName) {
+        if (fileName == null || fileName.equals("\\")) {
+            System.out.println(1);
+            fileName = "";
+        }
+        String username = UserUtils.getUsername(request);
+        String realpath = getRootPath(request) + username + File.separator + fileName;
+        return realpath;
+    }
+
+    private void matchFile(HttpServletRequest request, List<FileCustom> list, File dirFile,
+                           String reg,
+                           String regType) {
+        File[] listFiles = dirFile.listFiles();
+        if (listFiles != null) {
+            for (File file : listFiles) {
+                if (file.isFile()) {
+                    String suffixType = FileUtils.getFileType(file);
+                    if (suffixType.equals(regType) || (reg != null && file.getName().contains(reg))) {
+                        FileCustom custom = new FileCustom();
+                        custom.setFileName(file.getName());
+                        custom.setLastTime(FileUtils.formatTime(file.lastModified()));
+                        String parentPath = file.getParent();
+                        String prePath = parentPath.substring(
+                                parentPath.indexOf(getSearchFileName(request, null)) + getSearchFileName(request, null).length());
+                        custom.setCurrentPath(File.separator + prePath);
+                        if (file.isDirectory()) {
+                            custom.setFileSize("-");
+                        } else {
+                            custom.setFileSize(FileUtils.getDataSize(file.length()));
+                        }
+                        custom.setFileType(FileUtils.getFileType(file));
+                        list.add(custom);
+                    }
+                } else {
+                    matchFile(request, list, file, reg, regType);
+                }
+            }
+        }
+    }
 }

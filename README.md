@@ -26,13 +26,15 @@ QST青软实训
 
 完成计算文件大小
 
+完成单文件&多文件下载
+
 ## TODO List
 
 - [ ] 上传文件时同名检测并警告
 
 ## BUG Fix
 
-- [ ] index界面，总大小显示和百分比计算
+- [ ] index界面，百分比计算和显示
 
 - [X] 添加文件后User数据表countSize不变： <br>
   FileService.countFileSize()在判空前操作空指针对象。

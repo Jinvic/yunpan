@@ -3,6 +3,9 @@ package com.qst.yunpan.controller;
 import com.qst.yunpan.pojo.FileCustom;
 import com.qst.yunpan.pojo.Result;
 import com.qst.yunpan.service.FileService;
+import com.qst.yunpan.utils.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.HttpHeaders;
@@ -21,6 +24,8 @@ import java.util.List;
 @Controller
 @RequestMapping("/file")
 public class FileController {
+    private static Logger logger = LoggerFactory.getLogger(FileController.class);
+
     @Autowired
     FileService fileService;
 
@@ -74,7 +79,7 @@ public class FileController {
      * @param username    用户名
      * @return {@link ResponseEntity}<{@link byte[]}>
      */
-    @RequestMapping("/download")
+    @RequestMapping("/download.action")
     public ResponseEntity<byte[]> download(HttpServletRequest request, String currentPath, String[] downPath, String username) {
         try {
             String down = request.getParameter("downPath");
@@ -93,4 +98,26 @@ public class FileController {
             return null;
         }
     }
+
+    /**
+     * 查找文件（模糊查询）
+     *
+     * @param currentPath 当前路径
+     * @param regType     查找文件类型
+     * @param request     请求
+     * @return {@link Result}<{@link List}<{@link FileCustom}>>
+     */
+//    @RequestMapping("/searchFile.action")
+//    public @ResponseBody Result<List<FileCustom>> searchFile(HttpServletRequest request, String currentPath, String regType) {
+//        try {
+//            List<FileCustom> searchFile = fileService.searchFile(request, currentPath, regType);
+//            Result<List<FileCustom>> result = new Result<>(376, true, "查找成功");
+//            result.setData(searchFile);
+//            return result;
+//        } catch (Exception e) {
+//            logger.error(e.toString());
+//            //e.printStackTrace();
+//            return new Result<>(371, false, "查找失败");
+//        }
+//    }
 }
