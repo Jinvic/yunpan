@@ -8,9 +8,6 @@
     </insert>
     <select id="selectFiles" resultType="com.qst.yunpan.pojo.RecycleFile">
         select * from file where userName = #{userName};
-        select * from file where fileId = #{fileId};
-        delete from file where fileId = #{fileId} and userName = #{userName};
-        delete from file where userName = #{userName}
     </select>
 
 </mapper>
