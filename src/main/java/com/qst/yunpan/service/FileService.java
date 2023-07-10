@@ -4,10 +4,12 @@ import com.qst.yunpan.dao.FileDao;
 import com.qst.yunpan.dao.OfficeDao;
 import com.qst.yunpan.dao.UserDao;
 import com.qst.yunpan.pojo.FileCustom;
+import com.qst.yunpan.pojo.RecycleFile;
 import com.qst.yunpan.pojo.SummaryFile;
 import com.qst.yunpan.pojo.User;
 import com.qst.yunpan.utils.FileUtils;
 import com.qst.yunpan.utils.UserUtils;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
@@ -506,4 +509,137 @@ public class FileService {
         }
     }
 
+    /**
+     * 删除文件
+     *
+     * @param srcFile
+     *            源文件
+     * @throws Exception
+     */
+    private void delFile(File srcFile) throws Exception {
+        /* 如果是文件，直接删除 */
+        if (!srcFile.isDirectory()) {
+            /* 使用map 存储删除的 文件路径，同时保存用户名 */
+            srcFile.delete();
+            return;
+        }
+        /* 如果是文件夹，再遍历 */
+        File[] listFiles = srcFile.listFiles();
+        for (File file : listFiles) {
+            if (file.isDirectory()) {
+                delFile(file);
+            } else {
+                if (file.exists()) {
+                    file.delete();
+                }
+            }
+        }
+        if (srcFile.exists()) {
+            srcFile.delete();
+        }
+    }
+    /**
+     * 移动文件
+     *
+     * @param request
+     * @param currentPath
+     *            当前路径
+     * @param directoryName
+     *            文件名
+     * @param targetdirectorypath
+     *            目标路径
+     * @throws Exception
+     */
+    public void moveDirectory(HttpServletRequest request, String currentPath, String[] directoryName,String targetdirectorypath) throws Exception {
+        for (String srcName : directoryName) {
+            File srcFile = new File(getFileName(request, currentPath), srcName);
+            File targetFile = new File(getFileName(request, targetdirectorypath), srcName);
+            /* 处理目标目录中存在同名文件或文件夹问题 */
+            String srcname = srcName;
+            String prefixname = "";
+            String targetname = "";
+            if (targetFile.exists()) {
+                String[] srcnamesplit = srcname.split("\\)");
+                if (srcnamesplit.length > 1) {
+                    String intstring = srcnamesplit[0].substring(1);
+                    Pattern pattern = Pattern.compile("[0-9]*");
+                    Matcher isNum = pattern.matcher(intstring);
+                    if (isNum.matches()) {
+                        srcname = srcname.substring(srcnamesplit[0].length() + 1);
+                    }
+                }
+                for (int i = 1; true; i++) {
+                    prefixname = "(" + i + ")";
+                    targetname = prefixname + srcname;
+                    targetFile = new File(targetFile.getParent(), targetname);
+                    if (!targetFile.exists()) {
+                        break;
+                    }
+                }
+                targetFile = new File(targetFile.getParent(), targetname);
+            }
+            /* 移动即先复制，再删除 */
+            copyfile(srcFile, targetFile);
+            delFile(srcFile);
+        }
+    }
+    //编码转换
+    public void respFile(HttpServletResponse response, HttpServletRequest request, String currentPath, String fileName, String type) throws IOException {
+        File file = new File(getFileName(request, currentPath), fileName);
+        InputStream inputStream = new FileInputStream(file);
+        if ("docum".equals(type)) {
+            response.setCharacterEncoding("UTF-8");
+            IOUtils.copy(inputStream, response.getWriter(), "UTF-8");
+        } else {
+            IOUtils.copy(inputStream, response.getOutputStream());
+        }
+    }
+
+    /**
+     * 打开文档文件
+     *
+     * @param request
+     * @param currentPath
+     * @param fileName
+     * @return
+     * @throws Exception
+     */
+    public String openOffice(HttpServletRequest request, String currentPath, String fileName) throws Exception {
+        return officeDao.getOfficeId(FileUtils.MD5(new File(getFileName(request, currentPath), fileName)));
+    }
+
+    /*--回收站显示所有删除文件--*/
+    public List<RecycleFile> recycleFiles(HttpServletRequest request) throws Exception {
+        List<RecycleFile> recycleFiles = fileDao.selectFiles(UserUtils.getUsername(request));
+        for (RecycleFile file : recycleFiles) {
+            File f = new File(getRecyclePath(request), new File(file.getFilePath()).getName());
+            file.setFileName(f.getName());
+            file.setLastTime(FileUtils.formatTime(f.lastModified()));
+        }
+        return recycleFiles;
+    }
+    //调用数据操作层，根据要还原的文件id获得文件，然后根据文件名获取源文件的地址
+    public void revertDirectory(HttpServletRequest request, int[] fileId) throws Exception {
+        for (int id : fileId) {
+            RecycleFile file = fileDao.selectFile(id);
+            String fileName = new File(file.getFilePath()).getName();
+            File src = new File(getRecyclePath(request), fileName);
+            File dest = new File(getFileName(request, file.getFilePath()));
+            org.apache.commons.io.FileUtils.moveToDirectory(src, dest.getParentFile(), true);
+            fileDao.deleteFile(id, UserUtils.getUsername(request));
+        }
+    }
+    //依次遍历回收站中的各个文件，并逐一删除
+    public void delAllRecycle(HttpServletRequest request) throws Exception {
+        //获取回收站中的所有文件
+        File file = new File(getRecyclePath(request));
+        //遍历文件夹下所有文件
+        File[] inferiorFile = file.listFiles();
+        for (File f : inferiorFile) {
+            delFile(f);//调用本类下面的delFile()方法
+        }
+        //根据用户进行删除
+        fileDao.deleteFiles(UserUtils.getUsername(request));
+        reSize(request);
+    }
 }
