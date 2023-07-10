@@ -126,7 +126,8 @@ public class FileUtils {
             config.setConnectionTimeoutInMillis(3000);
             config.setSocketTimeoutInMillis(2000);
             //ACCESS_KEY_ID SECRET_ACCESS_KEY
-            config.setCredentials(new DefaultBceCredentials("c41d5d1934e6417497bb1cd4d77d4343", "55d130a720ec41dba855fd5f1dda3bb2"));
+//            config.setCredentials(new DefaultBceCredentials("c41d5d1934e6417497bb1cd4d77d4343", "55d130a720ec41dba855fd5f1dda3bb2"));
+            config.setCredentials(new DefaultBceCredentials("ALTAKtkRQatpLiMjNCQQm6xiPc", "7c1f4b05246a4018b1d2edabdfd5e03b"));
             docClient = new DocClient(config);
         }
         return docClient;

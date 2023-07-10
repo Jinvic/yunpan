@@ -156,6 +156,7 @@ public class FileService {
                         String documentId = FileUtils.getDocClient().createDocument(distFile, fileName, suffix).getDocumentId();
                         officeDao.addOffice(documentId, FileUtils.MD5(distFile));
                     } catch (Exception e) {
+                        e.printStackTrace();
                     }
                 }
             }
