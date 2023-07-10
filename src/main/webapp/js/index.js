@@ -61,16 +61,7 @@ function getFiles(path) {
             $("#list").empty();
             $("#checkAll").prop("checked", false);
             $.each(data.data, function () {
-                $("#list").append('<tr><td><input onclick="selectCheckbox()" name="check_name" type="checkbox" aria-label="..."></td>' +
-                    '<td width="60%"><a href="#" prePath="' + path + '" fileType="' + this.fileType + '" onclick="return openFile(this)"><span class="glyphicon glyphicon-' + this.fileType + '" style="margin-right: 10px"></span>' + this.fileName + '</a></td>' +
-                    '<td width="32px">' +
-                    '</td>' +
-                    '<td width="32px"><a href="#"' +
-                    'class="glyphicon glyphicon-download-alt" title="下载" onclick="return downloadFile(this)"></a></td>' +
-                    '<td width="32px"><a href="#"' +
-                    'class="glyphicon glyphicon-option-horizontal" title="更多"></a></td>' +
-                    '<td>' + this.fileSize + '</td>' +
-                    '<td>' + this.lastTime + '</td></tr>');
+                $("#list").append('<tr><td><input onclick="selectCheckbox()" name="check_name" type="checkbox" aria-label="..."></td>' + '<td width="60%"><a href="#" prePath="' + path + '" fileType="' + this.fileType + '" onclick="return openFile(this)"><span class="glyphicon glyphicon-' + this.fileType + '" style="margin-right: 10px"></span>' + this.fileName + '</a></td>' + '<td width="32px">' + '</td>' + '<td width="32px"><a href="#"' + 'class="glyphicon glyphicon-download-alt" title="下载" onclick="return downloadFile(this)"></a></td>' + '<td width="32px"><a href="#"' + 'class="glyphicon glyphicon-option-horizontal" title="更多"></a></td>' + '<td>' + this.fileSize + '</td>' + '<td>' + this.lastTime + '</td></tr>');
             });
         }
     });
@@ -85,10 +76,7 @@ function theClick(obj) {
 
 /**导航栏添加导航项*/
 function navPath(path, currentPath) {
-    $("#navPath").append(
-        '<a href="#" path="' + path
-        + '" onclick="return theClick(this)">&nbsp;'
-        + currentPath + '&nbsp;&#62;</a>');
+    $("#navPath").append('<a href="#" path="' + path + '" onclick="return theClick(this)">&nbsp;' + currentPath + '&nbsp;&#62;</a>');
 }
 
 /**上传文件点击事件*/
@@ -116,15 +104,9 @@ function upload() {
     }
     formData.append("currentPath", currentPath);
     $.ajax({
-        url: 'file/upload.action',
-        type: 'POST',
-        cache: false,
-        //这个参数是jquery特有的，不进行序列化，因为我们不是json格式的字符串，而是要传文件
-        processData: false,
-        //注意这里一定要设置contentType:false，不然会默认为传的是字符串，这样文件就传不过去了
-        contentType: false,
-        data: formData,
-        success: function (data) {
+        url: 'file/upload.action', type: 'POST', cache: false, //这个参数是jquery特有的，不进行序列化，因为我们不是json格式的字符串，而是要传文件
+        processData: false, //注意这里一定要设置contentType:false，不然会默认为传的是字符串，这样文件就传不过去了
+        contentType: false, data: formData, success: function (data) {
             if (data.success == true) {
                 getFiles(currentPath);
                 layer.closeAll('loading');
@@ -189,9 +171,7 @@ function rename() {
                 layer.msg('名字不合法，修改失败！');
             } else {
                 $.post("file/renameDirectory.action", {
-                    "currentPath": currentPath,
-                    "srcName": srcName,
-                    "destName": destName
+                    "currentPath": currentPath, "srcName": srcName, "destName": destName
                 }, function (data) {
                     if (data.success == true) {
                         layer.msg('重命名成功');
@@ -221,23 +201,18 @@ function deleteall() {
             btn: ['确认', '返回'] //按钮
         }, function () {
             $.ajax({
-                type: "POST",
-                url: "file/delDirectory.action",
-                data: {
+                type: "POST", url: "file/delDirectory.action", data: {
                     //难点1.数据封装时为currentPath,若加上
                     //traditional:true可阻止深度序列化
                     //深度序列化，
                     //即能将数组过去，例子:
                     //var arr = {score:{id:90,name:""},sunNum:{id:80,num:3}}
                     //那么深度序列化则会将对象key值转换为name值   ->score[id]=90
-                    "currentPath": currentPath,
-                    "directoryName": check
-                },
-                success: function (data) {
+                    "currentPath": currentPath, "directoryName": check
+                }, success: function (data) {
                     layer.msg(data.msg);
                     getFiles(currentPath);
-                },
-                traditional: true
+                }, traditional: true
             });
         }, function () {
 
@@ -250,8 +225,7 @@ function deleteall() {
 function buildfile() {
     layer.prompt({title: '新建文件夹'}, function (filename, index) {
         $.post("file/addDirectory.action", {
-            "currentPath": currentPath,
-            "directoryName": filename
+            "currentPath": currentPath, "directoryName": filename
         }, function (data) {
             layer.msg('新建文件夹' + filename + '成功');
             layer.close(index);
@@ -272,9 +246,7 @@ function copyto() {
     } else {
         layer.open({
             type: 2,			//0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
-            tilte: '移动到',
-            area: ['500px', '300px'],
-            shade: 0.6,			//遮罩透明度，默认：0.3
+            tilte: '移动到', area: ['500px', '300px'], shade: 0.6,			//遮罩透明度，默认：0.3
             shadeclose: false,	//控制点击弹层外区域关闭，默认：false
             fixed: false, 		//鼠标滚动时，层是否固定在可视区域，默认：true
             maxmin: false,		//是否允许全屏最小化，默认：false
@@ -283,9 +255,7 @@ function copyto() {
             scrollbar: true,		//是否允许浏览器出现滚动条，默认：true
             move: false,			//触发拖动的元素，默认是触发标题区域拖拽
             closeBtn: 0,			//提供了两种风格的关闭按钮，可通过配置1和2来展示,如果不显示，则closeBtn: 0，默认：1
-            content: 'file/summarylist.action',
-            btn: ['确定', '取消'],
-            yes: function (index, layero) {
+            content: 'file/summarylist.action', btn: ['确定', '取消'], yes: function (index, layero) {
                 var tree = layer.getChildFrame('.chooseup > .path', index);
                 targetdirectorypath = tree.html();
                 $.each($id.parent().next().children(), function (i, n) {
@@ -293,23 +263,18 @@ function copyto() {
                 });
                 if (cancopy == "yes") {
                     $.ajax({
-                        type: "POST",
-                        url: "file/copyDirectory.action",
-                        data: {
+                        type: "POST", url: "file/copyDirectory.action", data: {
                             "currentPath": currentPath,
                             "directoryName": check,
                             "targetdirectorypath": targetdirectorypath
-                        },
-                        success: function (data) {
+                        }, success: function (data) {
                             layer.msg(data.msg);
                             getFiles(currentPath);
-                        },
-                        traditional: true
+                        }, traditional: true
                     });
                     layer.close(index);
                 }
-            },
-            btn2: function (index, layero) {
+            }, btn2: function (index, layero) {
                 layer.close(index);
             }
         });
@@ -328,9 +293,7 @@ function moveto() {
     } else {
         layer.open({
             type: 2,			//0（信息框，默认）1（页面层）2（iframe层）3（加载层）4（tips层）
-            tilte: '移动到',
-            area: ['500px', '300px'],
-            shade: 0.6,			//遮罩透明度，默认：0.3
+            tilte: '移动到', area: ['500px', '300px'], shade: 0.6,			//遮罩透明度，默认：0.3
             shadeclose: false,	//控制点击弹层外区域关闭，默认：false
             fixed: false, 		//鼠标滚动时，层是否固定在可视区域，默认：true
             maxmin: false,		//是否允许全屏最小化，默认：false
@@ -339,9 +302,7 @@ function moveto() {
             scrollbar: true,		//是否允许浏览器出现滚动条，默认：true
             move: false,			//触发拖动的元素，默认是触发标题区域拖拽
             closeBtn: 0,			//提供了两种风格的关闭按钮，可通过配置1和2来展示,如果不显示，则closeBtn: 0，默认：1
-            content: 'file/summarylist.action',
-            btn: ['确定', '取消'],
-            yes: function (index, layero) {
+            content: 'file/summarylist.action', btn: ['确定', '取消'], yes: function (index, layero) {
                 var tree = layer.getChildFrame('.chooseup > .path', index);
                 targetdirectorypath = tree.html();
 // 							alert(targetdirectorypath + "---" + currentPath);
@@ -366,23 +327,18 @@ function moveto() {
                 });
                 if (canmove == "yes") {
                     $.ajax({
-                        type: "POST",
-                        url: "file/moveDirectory.action",
-                        data: {
+                        type: "POST", url: "file/moveDirectory.action", data: {
                             "currentPath": currentPath,
                             "directoryName": check,
                             "targetdirectorypath": targetdirectorypath
-                        },
-                        success: function (data) {
+                        }, success: function (data) {
                             layer.msg(data.msg);
                             getFiles(currentPath);
-                        },
-                        traditional: true
+                        }, traditional: true
                     });
                     layer.close(index);
                 }
-            },
-            btn2: function (index, layero) {
+            }, btn2: function (index, layero) {
                 layer.close(index);
             }
         });
@@ -401,23 +357,13 @@ function searchFile(obj) {
     } else {
         $("#list").empty();
         $.post("file/searchFile.action", {
-            "reg": reg,
-            "currentPath": currentPath
+            "reg": reg, "currentPath": currentPath
         }, function (data) {
             if (data.success) {
 // 					currentPath = path;
                 $("#checkAll").prop("checked", false);
                 $.each(data.data, function () {
-                    $("#list").append('<tr><td><input onclick="selectCheckbox()" name="check_name" type="checkbox" aria-label="..."></td>' +
-                        '<td width="60%"><a href="#" prePath="' + this.currentPath + '" fileType="' + this.fileType + '" onclick="return openFile(this)">' + this.fileName + '</a></td>' +
-                        '<td width="32px">' +
-                        '</td>' +
-                        '<td width="32px"><a href="#"' +
-                        'class="glyphicon glyphicon-download-alt" title="下载" onclick="return downloadFile(this)"></a></td>' +
-                        '<td width="32px"><a href="#"' +
-                        'class="glyphicon glyphicon-option-horizontal" title="更多"></a></td>' +
-                        '<td>' + this.fileSize + '</td>' +
-                        '<td>' + this.lastTime + '</td></tr>');
+                    $("#list").append('<tr><td><input onclick="selectCheckbox()" name="check_name" type="checkbox" aria-label="..."></td>' + '<td width="60%"><a href="#" prePath="' + this.currentPath + '" fileType="' + this.fileType + '" onclick="return openFile(this)">' + this.fileName + '</a></td>' + '<td width="32px">' + '</td>' + '<td width="32px"><a href="#"' + 'class="glyphicon glyphicon-download-alt" title="下载" onclick="return downloadFile(this)"></a></td>' + '<td width="32px"><a href="#"' + 'class="glyphicon glyphicon-option-horizontal" title="更多"></a></td>' + '<td>' + this.fileSize + '</td>' + '<td>' + this.lastTime + '</td></tr>');
                 });
             }
         });
@@ -436,23 +382,19 @@ function share(obj) {
             shareFile[i] = $(shareFiles[i]).text();
         }
         $.ajax({
-            type: "POST",
-            url: "shareFile.action",
-            data: {
-                "currentPath": currentPath,
-                "shareFile": shareFile
-            },
-            traditional: true
-            , success: function (data) {
+            type: "POST", url: "shareFile.action", data: {
+                "currentPath": currentPath, "shareFile": shareFile
+            }, traditional: true, success: function (data) {
                 layer.open({
                     title: '分享',
-                    content: '<input id="url" value="' + joinUrl(data.data) + '" class="form-control" readonly="readonly"/>'
-                    , btn: ['复制到粘贴板', '返回'],
-                    area: ['500px', '200px']
-                    , yes: function (index, layero) {
+                    content: '<input id="url" value="' + joinUrl(data.data) + '" class="form-control" readonly="readonly"/>',
+                    btn: ['复制到粘贴板', '返回'],
+                    area: ['500px', '200px'],
+                    yes: function (index, layero) {
                         //按钮【按钮一】的回调
                         copyUrl($("#url"));
-                    }, end: function (index, layero) {
+                    },
+                    end: function (index, layero) {
                         $("input:checkbox").prop("checked", false);
                     }
                 });
@@ -484,35 +426,31 @@ function joinUrl(url) {
 function openMyShare() {
     changeShareTab(1);
     layer.open({
-        type: 1,
-        area: ['850px', '450px'],
-        title: false,
-        content: $("#shareTab")
+        type: 1, area: ['850px', '450px'], title: false, content: $("#shareTab")
     });
 }
 
 /**分享面板切换*/
 function changeShareTab(order) {
     $.post("searchShare.action", {
-            "status": order
-        }, function (data) {
-            console.log(data);
-            console.log(data.success);
-            if (data.success) {
-                $("#shareTable tbody").empty();
-                $.each(data.data, function () {
-                    var opreate = '<button type="button" url="' + this.url + '" filePath="' + this.filePath + '" order="' + order + '" onclick="cancelShare(this)" ';
-                    if (order == "0") {
-                        opreate += 'class="btn btn-danger">删除</button>';
-                    } else {
-                        opreate += 'class="btn btn-warning">取消</button>';
-                    }
-                    $("#shareTable tbody").append('<tr><td><span class="glyphicon glyphicon-' + this.fileType + '" style="margin-right: 10px"></span>' + this.fileName + '</td><td>' + this.lastTime + '</td><td><input id="url" onFocus="copyUrl(this)" title="' + joinUrl(this.url) + '" value="' + joinUrl(this.url) + '" class="form-control" readonly="readonly"/></td><td>' + opreate + '</td></tr>');
-                });
+        "status": order
+    }, function (data) {
+        console.log(data);
+        console.log(data.success);
+        if (data.success) {
+            $("#shareTable tbody").empty();
+            $.each(data.data, function () {
+                var opreate = '<button type="button" url="' + this.url + '" filePath="' + this.filePath + '" order="' + order + '" onclick="cancelShare(this)" ';
+                if (order == "0") {
+                    opreate += 'class="btn btn-danger">删除</button>';
+                } else {
+                    opreate += 'class="btn btn-warning">取消</button>';
+                }
+                $("#shareTable tbody").append('<tr><td><span class="glyphicon glyphicon-' + this.fileType + '" style="margin-right: 10px"></span>' + this.fileName + '</td><td>' + this.lastTime + '</td><td><input id="url" onFocus="copyUrl(this)" title="' + joinUrl(this.url) + '" value="' + joinUrl(this.url) + '" class="form-control" readonly="readonly"/></td><td>' + opreate + '</td></tr>');
+            });
 
-            }
         }
-    );
+    });
     return false;
 }
 
@@ -522,9 +460,7 @@ function cancelShare(obj) {
     var filePath = $(obj).attr("filePath");
     var status = $(obj).attr("order");
     $.post("cancelShare.action", {
-        "url": url,
-        "filePath": filePath,
-        "status": status
+        "url": url, "filePath": filePath, "status": status
     }, function (data) {
         layer.msg(data.msg);
         if (data.success) {
@@ -540,11 +476,7 @@ function searchFileType(type) {
     $("#" + tabName).addClass("active").siblings().removeClass("active");
     changeTypeTab(type);
     layer.open({
-        type: 1,
-        zIndex: 80,
-        area: ['890px', '450px'],
-        title: false,
-        content: $("#fileTypeList")
+        type: 1, zIndex: 80, area: ['890px', '450px'], title: false, content: $("#fileTypeList")
     });
     return false;
 }
@@ -590,9 +522,7 @@ function openFile(obj) {
         return true;
     } else if (fileType.indexOf("office") >= 0) {
         $.post("file/openOffice.action", {
-            "currentPath": parentPath,
-            "fileType": fileType,
-            "fileName": fileName,
+            "currentPath": parentPath, "fileType": fileType, "fileName": fileName,
         }, function (data) {
             if (data.success) {
                 openOffice(data.data);
@@ -611,9 +541,7 @@ function openFile(obj) {
         });
     } else if (fileType.indexOf("docum") >= 0) {
         $.post("file/openFile.action", {
-            "currentPath": parentPath,
-            "fileType": fileType,
-            "fileName": fileName,
+            "currentPath": parentPath, "fileType": fileType, "fileName": fileName,
         }, function (data) {
             layer.open({
                 type: 1,
@@ -625,17 +553,11 @@ function openFile(obj) {
         });
     } else if (fileType.indexOf("vido") >= 0) {
         layer.open({
-            type: 1,
-            area: ['480px', '400px'],
-            title: false,
-            content: '<div id="a1"></div>'
+            type: 1, area: ['480px', '400px'], title: false, content: '<div id="a1"></div>'
         });
         var flashvars = {
-            f: 'file/openFile.action?' + url,
-//					f:'http://movie.ks.js.cn/flv/other/1_0.flv',
-            c: 0,
-            p: 1,
-            b: 1
+            f: 'file/openFile.action?' + url, //					f:'http://movie.ks.js.cn/flv/other/1_0.flv',
+            c: 0, p: 1, b: 1
         };
         var params = {bgcolor: '#FFF', allowFullScreen: true, allowScriptAccess: 'always', wmode: 'transparent'};
         CKobject.embedSWF('js/ckplayer/ckplayer.swf', 'a1', 'ckplayer_a1', '480', '400', flashvars, params);
@@ -654,24 +576,16 @@ function openOffice(id) {
         content: '<div id="officeContent"></div>'
     });
     var option = {
-        docId: id,
-        token: 'TOKEN',
-        host: 'BCEDOC',
-        serverHost: 'http://doc.bj.baidubce.com',
-        width: 600, //文档容器宽度
+        docId: id, token: 'TOKEN', host: 'BCEDOC', serverHost: 'http://doc.bj.baidubce.com', width: 600, //文档容器宽度
 //		        zoom: false,              //是否显示放大缩小按钮
         ready: function (handler) {  // 设置字体大小和颜色, 背景颜色（可设置白天黑夜模式）
             handler.setFontSize(1);
             handler.setBackgroundColor('#000');
             handler.setFontColor('#fff');
-        },
-        flip: function (data) {    // 翻页时回调函数, 可供客户进行统计等
+        }, flip: function (data) {    // 翻页时回调函数, 可供客户进行统计等
             console.log(data.pn);
-        },
-        fontSize: 'big',
-        toolbarConf: {
-            zoom: false,
-            page: false, //上下翻页箭头图标
+        }, fontSize: 'big', toolbarConf: {
+            zoom: false, page: false, //上下翻页箭头图标
             pagenum: false, //几分之几页
             full: false, //是否显示全屏图标,点击后全屏
             copy: true, //是否可以复制文档内容
@@ -682,4 +596,4 @@ function openOffice(id) {
 }
 
 /**引入ckplayer插件*/
-<script src="${pageContext.request.contextPath }/js/ckplayer/ckplayer.js"> </script>
+<script src="${pageContext.request.contextPath }/js/ckplayer/ckplayer.js"></script>

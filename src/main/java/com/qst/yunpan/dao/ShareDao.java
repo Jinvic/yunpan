@@ -12,5 +12,5 @@ public interface ShareDao {
 
     List<Share> findShareByName(@Param("username") String username, @Param("status") int status);
 
-    void cancelShare(String url, String filePath, int delete);
+    void cancelShare(@Param("url") String url, @Param("filePath") String filePath, @Param("status") int delete);
 }

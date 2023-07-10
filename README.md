@@ -34,7 +34,7 @@ QST青软实训
 
 完成文件分享功能
 
-~~完成查看分享功能~~
+完成查看分享功能
 
 ## BUG Fix
 
@@ -43,7 +43,7 @@ QST青软实训
 - [ ] index界面，百分比计算和显示
 
 - [X] 添加文件后User数据表countSize不变： <br>
-  FileService.countFileSize()在判空前操作空指针对象。
+  FileService.getFileName()在判空前操作空指针对象。
 
 - [ ] 分享界面图标未正常显示
 
@@ -60,4 +60,5 @@ QST青软实训
 - [X] 查看分享时没有内容:<br>
   修改ShareDao.java接口中的findShareByName()方法，为每个参数加上@Param注释即可
 
-- [ ] 已分享的链接无法取消或删除
+- [X] 已分享的链接无法取消或删除<br>
+  修改ShareDao.java接口中cancelShare()方法，为每个参数加上@Param注释即可
