@@ -512,8 +512,7 @@ public class FileService {
     /**
      * 删除文件
      *
-     * @param srcFile
-     *            源文件
+     * @param srcFile 源文件
      * @throws Exception
      */
     private void delFile(File srcFile) throws Exception {
@@ -538,19 +537,17 @@ public class FileService {
             srcFile.delete();
         }
     }
+
     /**
      * 移动文件
      *
      * @param request
-     * @param currentPath
-     *            当前路径
-     * @param directoryName
-     *            文件名
-     * @param targetdirectorypath
-     *            目标路径
+     * @param currentPath         当前路径
+     * @param directoryName       文件名
+     * @param targetdirectorypath 目标路径
      * @throws Exception
      */
-    public void moveDirectory(HttpServletRequest request, String currentPath, String[] directoryName,String targetdirectorypath) throws Exception {
+    public void moveDirectory(HttpServletRequest request, String currentPath, String[] directoryName, String targetdirectorypath) throws Exception {
         for (String srcName : directoryName) {
             File srcFile = new File(getFileName(request, currentPath), srcName);
             File targetFile = new File(getFileName(request, targetdirectorypath), srcName);
@@ -583,6 +580,7 @@ public class FileService {
             delFile(srcFile);
         }
     }
+
     //编码转换
     public void respFile(HttpServletResponse response, HttpServletRequest request, String currentPath, String fileName, String type) throws IOException {
         File file = new File(getFileName(request, currentPath), fileName);
@@ -618,6 +616,7 @@ public class FileService {
         }
         return recycleFiles;
     }
+
     //调用数据操作层，根据要还原的文件id获得文件，然后根据文件名获取源文件的地址
     public void revertDirectory(HttpServletRequest request, int[] fileId) throws Exception {
         for (int id : fileId) {
@@ -629,6 +628,7 @@ public class FileService {
             fileDao.deleteFile(id, UserUtils.getUsername(request));
         }
     }
+
     //依次遍历回收站中的各个文件，并逐一删除
     public void delAllRecycle(HttpServletRequest request) throws Exception {
         //获取回收站中的所有文件

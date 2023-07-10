@@ -4,10 +4,29 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.qst.yunpan.dao.FileDao">
     <insert id="insertFiles">
-        insert into file(filePath,userName) values(#{filePath},#{userName})
+        insert into file(filePath, userName)
+        values (#{filePath}, #{userName})
     </insert>
     <select id="selectFiles" resultType="com.qst.yunpan.pojo.RecycleFile">
-        select * from file where userName = #{userName};
+        select *
+        from file
+        where userName = #{userName}
     </select>
+    <select id="selectFile" resultType="com.qst.yunpan.pojo.RecycleFile">
+        select *
+        from file
+        where fileId = #{fileId}
+    </select>
+    <delete id="deleteFile">
+        delete
+        from file
+        where fileId = #{fileId}
+          and userName = #{userName}
+    </delete>
+    <delete id="deleteFiles">
+        delete
+        from file
+        where userName = #{userName}
+    </delete>
 
 </mapper>

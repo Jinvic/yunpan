@@ -6,7 +6,8 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 
-public interface FileDao {
+public interface
+FileDao {
     void insertFiles(@Param("filePath") String filePath, @Param("userName") String userName) throws Exception;
     List<RecycleFile> selectFiles(@Param("userName") String userName) throws Exception;
     RecycleFile selectFile(@Param("fileId") int fileId) throws Exception;
