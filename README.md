@@ -59,7 +59,7 @@ QST青软实训
 - [X] 分享链接不正确：<br>
   修改index.js下的joinUrl()函数即可
 
-- [ ] 分享界面的文件下载后，网盘目录下的压缩包未被正确删除
+- [ ] 单文件夹下载后，网盘目录下的压缩包未被正确删除
 
 - [X] 查看分享时没有内容:<br>
   修改ShareDao.java接口中的findShareByName()方法，为每个参数加上@Param注释即可
@@ -69,4 +69,9 @@ QST青软实训
 
 - [ ] Flash已被弃用，无法预览视频，需要替代方案
 
-- [ ] 回收站单文件删除功能，只有前端没有后端
+- [X] 回收站单文件删除功能，只有前端没有后端<br>
+  在FileController层新增delRecycleDirectory()方法用来接受delRecycle.action请求；<br>
+  在FileService层新增delRecycle()方法实现回收站单文件删除。<br>
+  调用FileDao层已有方法deleteFile()来操作数据库。<br>
+
+- [ ] 音频播放无法显示长度和调节进度

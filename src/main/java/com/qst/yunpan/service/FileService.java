@@ -340,8 +340,7 @@ public class FileService {
                         custom.setFileName(file.getName());
                         custom.setLastTime(FileUtils.formatTime(file.lastModified()));
                         String parentPath = file.getParent();
-                        String prePath = parentPath.substring(
-                                parentPath.indexOf(getSearchFileName(request, null)) + getSearchFileName(request, null).length());
+                        String prePath = parentPath.substring(parentPath.indexOf(getSearchFileName(request, null)) + getSearchFileName(request, null).length());
                         custom.setCurrentPath(File.separator + prePath);
                         if (file.isDirectory()) {
                             custom.setFileSize("-");
@@ -641,6 +640,20 @@ public class FileService {
         }
         //根据用户进行删除
         fileDao.deleteFiles(UserUtils.getUsername(request));
+        reSize(request);
+    }
+
+    //依次遍历回收站中的各个文件，并逐一删除
+    public void delRecycle(HttpServletRequest request, int fileId) throws Exception {
+//        Integer fileId = Integer.parseInt(request.getParameter("fileId").toString());
+//        System.out.println(fileId);
+        RecycleFile recycleFile = fileDao.selectFile(fileId);
+        String fileName = new File(recycleFile.getFilePath()).getName();
+        File file = new File(getRecyclePath(request), fileName);
+        System.out.println(file);
+        delFile(file);//调用本类下面的delFile()方法
+        //根据id进行删除
+        fileDao.deleteFile(fileId, UserUtils.getUsername(request));
         reSize(request);
     }
 }

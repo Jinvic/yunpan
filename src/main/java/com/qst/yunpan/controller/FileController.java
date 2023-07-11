@@ -198,21 +198,19 @@ public class FileController {
             return new Result<>(361, true, "复制失败");
         }
     }
+
     /**
      * 移动文件夹
      *
-     * @param currentPath
-     *            当前路径
-     * @param directoryName
-     *            文件夹名
-     * @param targetdirectorypath
-     *            目标位置
+     * @param currentPath         当前路径
+     * @param directoryName       文件夹名
+     * @param targetdirectorypath 目标位置
      * @return Json对象
      */
     @RequestMapping("/moveDirectory")
-    public @ResponseBody Result<String> moveDirectory(HttpServletRequest request,String currentPath,String[] directoryName, String targetdirectorypath) {
+    public @ResponseBody Result<String> moveDirectory(HttpServletRequest request, String currentPath, String[] directoryName, String targetdirectorypath) {
         try {
-            fileService.moveDirectory(request, currentPath, directoryName,targetdirectorypath);
+            fileService.moveDirectory(request, currentPath, directoryName, targetdirectorypath);
             return new Result<>(366, true, "移动成功");
         } catch (Exception e) {
             return new Result<>(361, true, "移动失败");
@@ -222,20 +220,16 @@ public class FileController {
     /**
      * 打开文件
      *
-     * @param response
-     *            响应文件流
-     * @param currentPath
-     *            当前路径
-     * @param fileName
-     *            文件名
-     * @param fileType
-     *            文件类型
+     * @param response    响应文件流
+     * @param currentPath 当前路径
+     * @param fileName    文件名
+     * @param fileType    文件类型
      */
     @RequestMapping("/openFile")
     public void openFile(HttpServletResponse response, HttpServletRequest request, String currentPath, String fileName, String fileType) {
         try {
             fileService.respFile(response, request, currentPath, fileName, fileType);
-        }catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -243,19 +237,16 @@ public class FileController {
     /**
      * 打开文档
      *
-     * @param currentPath
-     *            当面路径
-     * @param fileName
-     *            文件名
-     * @param fileType
-     *            文件类型
+     * @param currentPath 当面路径
+     * @param fileName    文件名
+     * @param fileType    文件类型
      * @return Json对象（文件Id）
      */
     @RequestMapping("/openOffice")
     public @ResponseBody Result<String> openOffice(HttpServletRequest request, String currentPath,
                                                    String fileName, String fileType) {
         try {
-            String openOffice = fileService.openOffice(request, currentPath,fileName);
+            String openOffice = fileService.openOffice(request, currentPath, fileName);
             if (openOffice != null) {
                 Result<String> result = new Result<>(505, true, "打开成功");
                 result.setData(openOffice);
@@ -267,6 +258,7 @@ public class FileController {
             return new Result<>(501, false, "打开失败");
         }
     }
+
     //将路径和文件名传入model，再返回给前台打开
     @RequestMapping("/openAudioPage")
     public String openAudioPage(Model model, String currentPath, String fileName) {
@@ -274,12 +266,13 @@ public class FileController {
         model.addAttribute("fileName", fileName);
         return "audio";
     }
+
     //获取回收站文件信息
     @RequestMapping("/recycleFile")
     public String recycleFile(HttpServletRequest request) {
         try {
             List<RecycleFile> findDelFile = fileService.recycleFiles(request);
-            if(null != findDelFile && findDelFile.size() != 0) {
+            if (null != findDelFile && findDelFile.size() != 0) {
                 request.setAttribute("findDelFile", findDelFile);
             }
         } catch (Exception e) {
@@ -287,6 +280,7 @@ public class FileController {
         }
         return "recycle";
     }
+
     //将选中的文件进行还原
     @RequestMapping("/revertDirectory")
     public @ResponseBody Result<String> revertDirectory(HttpServletRequest request, int[] fileId) {
@@ -297,11 +291,29 @@ public class FileController {
             return new Result<>(322, false, "还原失败");
         }
     }
+
     //清空回收站
     @RequestMapping("/delAllRecycle")
     public @ResponseBody Result<String> delAllRecycleDirectory(HttpServletRequest request) {
         try {
             fileService.delAllRecycle(request);
+            // 返回状态码
+            return new Result<>(327, true, "删除成功");
+        } catch (Exception e) {
+            return new Result<>(322, false, "删除失败");
+        }
+    }
+
+    /**
+     * 删除回收站文件
+     *
+     * @param request 请求
+     * @return {@link Result}<{@link String}>
+     */
+    @RequestMapping("/delRecycle")
+    public @ResponseBody Result<String> delRecycleDirectory(HttpServletRequest request, int fileId) {
+        try {
+            fileService.delRecycle(request, fileId);
             // 返回状态码
             return new Result<>(327, true, "删除成功");
         } catch (Exception e) {
