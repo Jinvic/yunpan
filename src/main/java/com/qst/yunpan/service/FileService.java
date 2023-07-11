@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.nio.channels.FileChannel;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.ZipEntry;
@@ -297,10 +298,16 @@ public class FileService {
      *
      * @param downloadFile 下载文件
      */
-    public void deleteDownPackage(File downloadFile) {
-        if (downloadFile.getName().endsWith("个文件.zip")) {
+    public void deleteDownPackage(File downloadFile, String[] downPath) {
+//        if (downloadFile.getName().endsWith("个文件.zip")) {
+//            downloadFile.delete();
+//        }
+        //  ！（下载文件只有一个且与返回的打包文件同名）
+        System.out.println(downloadFile.getName());
+        for (String path : downPath)
+            System.out.println(path);
+        if (!(downPath.length == 1 && downloadFile.getName() == downPath[0]))
             downloadFile.delete();
-        }
     }
 
     /**

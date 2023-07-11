@@ -87,7 +87,7 @@ public class FileController {
     @RequestMapping("/download.action")
     public ResponseEntity<byte[]> download(HttpServletRequest request, String currentPath, String[] downPath, String username) {
         try {
-            String down = request.getParameter("downPath");
+//            String down = request.getParameter("downPath");
             File downloadFile = fileService.downPackage(request, currentPath, downPath, username);
             HttpHeaders headers = new HttpHeaders();
             //设置ContentType为二进制数据流
@@ -96,7 +96,7 @@ public class FileController {
             //attachment指示浏览器以附件形式处理响应内容的参数值
             headers.setContentDispositionFormData("attachment", fileName);
             byte[] fileToByteArray = org.apache.commons.io.FileUtils.readFileToByteArray(downloadFile);
-            fileService.deleteDownPackage(downloadFile);
+            fileService.deleteDownPackage(downloadFile, downPath);
             return new ResponseEntity<byte[]>(fileToByteArray, headers, HttpStatus.CREATED);
         } catch (Exception e) {
             e.printStackTrace();
