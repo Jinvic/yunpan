@@ -6,6 +6,7 @@ import com.qst.yunpan.pojo.Result;
 import com.qst.yunpan.pojo.SummaryFile;
 import com.qst.yunpan.service.FileService;
 import com.qst.yunpan.utils.FileUtils;
+import com.qst.yunpan.utils.UserUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -235,6 +236,34 @@ public class FileController {
     }
 
     /**
+     * 返回视频实际路径
+     *
+     * @param request     请求
+     * @param currentPath 当前路径
+     * @param fileName    文件名称
+     * @return {@link String}
+     */
+    @RequestMapping("/openVideo")
+    public @ResponseBody Result<String> openVideo(HttpServletRequest request, String currentPath, String fileName) {
+        try {
+            //DEBUG:
+            System.out.println("in openVideo");
+            System.out.println(currentPath);
+            System.out.println(fileName);
+            fileService.copyVideoToFileServer(request, currentPath, fileName);
+            String filePath = fileService.getVideoPath(request, fileName);
+            System.out.println(filePath);
+            Result<String> result = new Result<>(555, true, "打开成功");
+            result.setData(filePath);
+            System.out.println(result.getData());
+            return result;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Result<>(777, false, "打开视频失败");
+        }
+    }
+
+    /**
      * 打开文档
      *
      * @param currentPath 当面路径
@@ -258,6 +287,7 @@ public class FileController {
             return new Result<>(501, false, "打开失败");
         }
     }
+
 
     //将路径和文件名传入model，再返回给前台打开
     @RequestMapping("/openAudioPage")

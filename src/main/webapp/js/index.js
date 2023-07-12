@@ -511,7 +511,7 @@ function openFile(obj) {
     var fileName = $(obj).text();
     var parentPath = $(obj).attr("currentPath") == null ? currentPath : $(obj).attr("currentPath");
     var url = encodeURI('currentPath=' + parentPath + '&fileType=' + fileType + '&fileName=' + fileName);
-    //alert(url);
+    // alert(url);
     if (fileType == "folder-open") {
         var prePath = $(obj).attr("prePath");
         var path = prePath + "\\" + fileName;
@@ -552,15 +552,26 @@ function openFile(obj) {
             });
         });
     } else if (fileType.indexOf("vido") >= 0) {
-        layer.open({
-            type: 1, area: ['480px', '400px'], title: false, content: '<div id="a1"></div>'
-        });
-        var flashvars = {
-            f: 'file/openFile.action?' + url, //					f:'http://movie.ks.js.cn/flv/other/1_0.flv',
-            c: 0, p: 1, b: 1
-        };
-        var params = {bgcolor: '#FFF', allowFullScreen: true, allowScriptAccess: 'always', wmode: 'transparent'};
-        CKobject.embedSWF('js/ckplayer/ckplayer.swf', 'a1', 'ckplayer_a1', '480', '400', flashvars, params);
+        $.post("file/openVideo.action", {
+                "currentPath": parentPath, "fileName": fileName,
+            }, function (data) {
+                console.log(data);
+                console.log(data.data);
+                if (data.success) {
+                    layer.open({
+                        type: 1, area: ['480px', '400px'], title: false, content: '<div class="ckplayer"></div>'
+                    });
+                    //定义一个变量：videoObject，用来做为视频初始化配置
+                    var videoObject = {
+                        container: '.ckplayer', //“#”代表容器的ID，“.”或“”代表容器的class
+                        video: data.data
+                    };
+                    new ckplayer(videoObject);//初始化播放器
+                } else {
+                    layer.msg(data.msg);
+                }
+            }
+        );
         return false;
     }
     return false;
