@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.nio.channels.FileChannel;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.ZipEntry;
@@ -77,7 +78,7 @@ public class FileService {
     public String getFileName(HttpServletRequest request, String fileName) {
 
         if (fileName == null || fileName.equals("\\")) {
-            System.out.println(1);
+            System.out.println("FileService.getFileName:\n\troot directory");
             fileName = "";
         } else {
             fileName = fileName.replace("\\", "//");
@@ -106,6 +107,74 @@ public class FileService {
     }
 
     /**
+     * 视频实际路径
+     * 浏览器安全限制不能访问本地文件，弃用
+     *
+     * @param request     请求
+     * @param currentPath 当前路径
+     * @param fileName    文件名称
+     * @return {@link String}
+     */
+    public String getVideoName(HttpServletRequest request, String currentPath, String fileName) {
+        currentPath = currentPath + File.separator;
+        currentPath = currentPath.replace("\\\\", "");
+        String username = UserUtils.getUsername(request);
+        String realpath = getRootPath(request) + username + File.separator + currentPath + fileName;
+        return realpath;
+    }
+
+    /**
+     * 获取视频网络路径
+     *
+     * @param request  请求
+     * @param fileName 文件名称
+     * @return {@link String}
+     */
+    public String getVideoPath(HttpServletRequest request, String fileName) {
+        String protocol = request.getScheme();
+        String hostname = request.getServerName();
+        int port = request.getServerPort();
+        String videoPath = protocol + "://" + hostname + ":" + port + "/FileServer/" + fileName;
+        return videoPath;
+    }
+
+    /**
+     * 视频复制到文件服务器
+     *
+     * @param request     请求
+     * @param currentPath 当前路径
+     * @param fileName    文件名称
+     * @throws Exception 异常
+     */
+    public void copyVideoToFileServer(HttpServletRequest request, String currentPath, String fileName) throws Exception {
+        System.out.println("FileService.copyVideoToFileServer:");
+        String realPath = getVideoName(request, currentPath, fileName);
+        Path path = Paths.get(getRootPath(request));
+        path = path.getParent().getParent().getParent();
+        String tomcatRootDirectory = path.toString();
+        System.out.println("\ttomcatRootDirectory:\t" + tomcatRootDirectory);
+        String destPath = tomcatRootDirectory + File.separator + "FileServer";
+        System.out.println("\trealPath:\t" + realPath);
+        System.out.println("\tdestPath:\t" + destPath);
+        File src = new File(realPath);
+        File dest = new File(destPath);
+
+        //每次使用前清空文件服务器
+        File[] listFiles = dest.listFiles();
+        for (File file : listFiles) {
+            if (file.isDirectory()) {
+                delFile(file);
+            } else {
+                if (file.exists()) {
+                    file.delete();
+                }
+            }
+        }
+
+        org.apache.commons.io.FileUtils.copyToDirectory(src, dest);
+    }
+
+    /**
      * 列出文件
      *
      * @param realPath 真正路径
@@ -114,6 +183,7 @@ public class FileService {
     public List<FileCustom> listFile(String realPath) {
         File[] files = new File(realPath).listFiles();
         System.out.println("+++++++++++++++++++++++++");
+        System.out.println("FileService.listFile:");
         List<FileCustom> lists = new ArrayList<>();
         if (files != null) {
             for (File file : files) {
@@ -129,7 +199,7 @@ public class FileService {
                     }
                     custom.setFileType(FileUtils.getFileType(file));
                     lists.add(custom);
-                    System.out.println(custom + "----------------");
+                    System.out.println(custom.getFilePath() + "----------------" + custom.getFileName());
                 }
             }
         }
@@ -302,12 +372,14 @@ public class FileService {
 //        if (downloadFile.getName().endsWith("个文件.zip")) {
 //            downloadFile.delete();
 //        }
-        //  ！（下载文件只有一个且与返回的打包文件同名）
-        System.out.println(downloadFile.getName());
+
+        System.out.println("FileService.deleteDownPackage");
+        System.out.println("\tDownPackage name:\t" + downloadFile.getName());
+        System.out.println("\tdownloadFiles:");
         for (String path : downPath)
-            System.out.println(path);
-        if (!(downPath.length == 1 && downloadFile.getName() == downPath[0]))
-            downloadFile.delete();
+            System.out.println("\t\t" + path);
+        //  ！（下载文件只有一个且与返回的打包文件同名）
+        if (!(downPath.length == 1 && downloadFile.getName() == downPath[0])) downloadFile.delete();
     }
 
     /**
@@ -327,7 +399,7 @@ public class FileService {
 
     private String getSearchFileName(HttpServletRequest request, String fileName) {
         if (fileName == null || fileName.equals("\\")) {
-            System.out.println(1);
+            System.out.println("FileService.getSearchFileName:\n\troot directory");
             fileName = "";
         }
         String username = UserUtils.getUsername(request);
@@ -652,12 +724,11 @@ public class FileService {
 
     //依次遍历回收站中的各个文件，并逐一删除
     public void delRecycle(HttpServletRequest request, int fileId) throws Exception {
-//        Integer fileId = Integer.parseInt(request.getParameter("fileId").toString());
-//        System.out.println(fileId);
         RecycleFile recycleFile = fileDao.selectFile(fileId);
         String fileName = new File(recycleFile.getFilePath()).getName();
         File file = new File(getRecyclePath(request), fileName);
-        System.out.println(file);
+        System.out.println("FileService.delRecycle:");
+        System.out.println("\tfile to delete:" + file);
         delFile(file);//调用本类下面的delFile()方法
         //根据id进行删除
         fileDao.deleteFile(fileId, UserUtils.getUsername(request));
