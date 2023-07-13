@@ -552,37 +552,37 @@ function openFile(obj) {
             });
         });
     } else if (fileType.indexOf("vido") >= 0) {
-        layer.open({
-            type: 1, area: ['480px', '400px'], title: false, content: '<div class="ckplayer"></div>'
-        });
-        //定义一个变量：videoObject，用来做为视频初始化配置
-        var videoObject = {
-            container: '.ckplayer', //“#”代表容器的ID，“.”或“”代表容器的class
-            video: 'file/openFile.action?' + url
-        };
-        new ckplayer(videoObject);//初始化播放器
+        // layer.open({
+        //     type: 1, area: ['480px', '400px'], title: false, content: '<div class="ckplayer"></div>'
+        // });
+        // //定义一个变量：videoObject，用来做为视频初始化配置
+        // var videoObject = {
+        //     container: '.ckplayer', //“#”代表容器的ID，“.”或“”代表容器的class
+        //     video: 'file/openFile.action?' + url
+        // };
+        // new ckplayer(videoObject);//初始化播放器
 
-        // $.post("file/openVideo.action", {
-        //         "currentPath": parentPath, "fileName": fileName,
-        //     }, function (data) {
-        //         console.log(data);
-        //         console.log(data.data);
-        //         if (data.success) {
-        //             layer.open({
-        //                 type: 1, area: ['480px', '400px'], title: false, content: '<div class="ckplayer"></div>'
-        //             });
-        //             //定义一个变量：videoObject，用来做为视频初始化配置
-        //             var videoObject = {
-        //                 container: '.ckplayer', //“#”代表容器的ID，“.”或“”代表容器的class
-        //                 video: data.data
-        //             };
-        //             new ckplayer(videoObject);//初始化播放器
-        //         } else {
-        //             layer.msg(data.msg);
-        //         }
-        //     }
-        // );
-        // return false;
+        $.post("file/openVideo.action", {
+                "currentPath": parentPath, "fileName": fileName,
+            }, function (data) {
+                console.log(data);
+                console.log(data.data);
+                if (data.success) {
+                    layer.open({
+                        type: 1, area: ['480px', '400px'], title: false, content: '<div class="ckplayer"></div>'
+                    });
+                    //定义一个变量：videoObject，用来做为视频初始化配置
+                    var videoObject = {
+                        container: '.ckplayer', //“#”代表容器的ID，“.”或“”代表容器的class
+                        video: data.data
+                    };
+                    new ckplayer(videoObject);//初始化播放器
+                } else {
+                    layer.msg(data.msg);
+                }
+            }
+        );
+        return false;
     }
     return false;
 }
