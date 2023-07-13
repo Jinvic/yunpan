@@ -379,7 +379,7 @@ public class FileService {
         for (String path : downPath)
             System.out.println("\t\t" + path);
         //  ！（下载文件只有一个且与返回的打包文件同名）
-        if (!(downPath.length == 1 && downloadFile.getName() == downPath[0])) downloadFile.delete();
+        if (!(downPath.length == 1 && downloadFile.getName().equals(downPath[0]))) downloadFile.delete();
     }
 
     /**
@@ -722,7 +722,7 @@ public class FileService {
         reSize(request);
     }
 
-    //依次遍历回收站中的各个文件，并逐一删除
+    //根据fileId删除回收站文件
     public void delRecycle(HttpServletRequest request, int fileId) throws Exception {
         RecycleFile recycleFile = fileDao.selectFile(fileId);
         String fileName = new File(recycleFile.getFilePath()).getName();
